@@ -1,4 +1,4 @@
-# import numpy as np
+import numpy as np
 
 class board:
     # TODO:
@@ -10,21 +10,27 @@ class board:
 
     def __init__(numPlayers=2, size=3, dimension=2, debug=False):
         self.numPlayers, self.size, self.dimension = numPlayers, size, dimension
-        # self.state = np.zeros(*[size]*dimension)
-        state = [0]*size
-        for i in range(dimension):
-            state = [state] * size
-        self.state = state
+        self.state = np.zeros(*[size]*dimension)
 
-    def tile(position):
-        # if len(position) != dimension
-        out = self.state
-        for index in position:
-            out = out[index]
-        return out
-
-    def act(player, position):
-        activeTile = tile(position)
-        if activeTile != 0:
+    def act(self, player, position):
+        if self.state[*position] != 0:
             print "Invalid Move: {} by Player {}".format(position, player)
             return
+        self.state[*position] = player
+
+    def checkWin(self):
+        rows = [] #generate rows
+        diag1 = []
+        diag2 = []
+        for i in range(size):
+            rows.append(self.state(i,:))
+            rows.append(self.state(:,i))
+            diag1.append(self.state(i,i))
+            diag2.append(self.state(i,size-i))
+        rows.append(diag1)
+        rows.append(diag2)
+        for row in rows
+            player = row[0]
+            if all(map(lambda i: i == player, row[0:])):
+                return player
+            #eliminate possible rows?
