@@ -5,3 +5,5 @@ class board:
         for i in range(dimension):
             state = [state] * size
         self.state = state
+        
+# test
