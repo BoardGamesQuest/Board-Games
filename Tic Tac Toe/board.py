@@ -16,7 +16,7 @@ class board:
         if self.state[*position] != 0:
             print "Invalid Move: {} by Player {}".format(position, player)
             return
-        self.state[*position] = player2
+        self.state[*position] = player
 
     def checkWin(self):
         rows = [] #generate rows
