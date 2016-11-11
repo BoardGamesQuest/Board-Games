@@ -8,8 +8,7 @@ class Board:
     #       Invalid moves
     # Move this To Do stuff into readme?
     currentPlayer = 1
-
-    def __init__(self, numPlayers=2, size=3, dimension=2, debug=False):
+    def __init__(self, numPlayers=2, size=2, dimension=4, debug=False):
         self.numPlayers, self.size, self.dimension = numPlayers, size, dimension
         self.state = np.zeros(tuple([size]*dimension), dtype=np.int)
 
@@ -17,14 +16,14 @@ class Board:
         print self.state
 
     def act(self, position, player=currentPlayer):
-        if type(position) == list:
+        if type(position) != tuple:
             position = tuple(position)
         # print "Player {}, make your move.".format(player)
         if self.state[position] != 0:
             print "Invalid Move: {} by Player {}".format(position, player)
             return
         self.state[position] = player
-        print self.state[position]
+        # print self.state[position]
         self.currentPlayer = (self.currentPlayer % self.numPlayers) + 1
 
     def checkWin(self):
@@ -44,7 +43,7 @@ class Board:
                 return player
             #eliminate possible rows?
 
-ticTac = Board()
+ticTac = Board(numPlayers=3)
 ticTac.display()
-ticTac.act((1,2))
+ticTac.act((1,1,0,1))
 ticTac.display()
