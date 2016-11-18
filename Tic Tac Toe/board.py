@@ -8,7 +8,7 @@ class Board:
     #       Invalid moves
     # Move this To Do stuff into readme?
     currentPlayer = 1
-    def __init__(self, numPlayers=2, size=2, dimension=4, debug=False):
+    def __init__(self, numPlayers=2, size=3, dimension=2, debug=False):
         self.numPlayers, self.size, self.dimension = numPlayers, size, dimension
         self.state = np.zeros(tuple([size]*dimension), dtype=np.int)
 
@@ -30,11 +30,12 @@ class Board:
         rows = [] #generate rows
         diag1 = []
         diag2 = []
-        for i in range(size):
+        for i in range(self.size):
             rows.append(self.state[i,:])
             rows.append(self.state[:,i])
+            print rows
             diag1.append(self.state[i,i])
-            diag2.append(self.state[i,size-i])
+            diag2.append(self.state[i,self.size-i-1])
         rows.append(diag1)
         rows.append(diag2)
         for row in rows:
@@ -45,5 +46,6 @@ class Board:
 
 ticTac = Board(numPlayers=3)
 ticTac.display()
-ticTac.act((1,1,0,1))
+ticTac.act((1,1))
 ticTac.display()
+ticTac.checkWin()
