@@ -26,18 +26,20 @@ class Board:
         # print self.state[position]
         self.currentPlayer = (self.currentPlayer % self.numPlayers) + 1
 
-    def checkWin(self):
+    def findRowIndeces():
         rows = [] #generate rows
         diag1 = []
         diag2 = []
         for i in range(self.size):
-            rows.append(self.state[i,:])
-            rows.append(self.state[:,i])
-            print rows
-            diag1.append(self.state[i,i])
-            diag2.append(self.state[i,self.size-i-1])
+            rows.append((i,:))
+            rows.append((:,i))
+            diag1.append((i,i))
+            diag2.append((i,self.size-i-1))
         rows.append(diag1)
         rows.append(diag2)
+        return rows
+
+    def checkWin(self):
         for row in rows:
             player = row[0]
             if all(map(lambda i: i == player, row[0:])):
