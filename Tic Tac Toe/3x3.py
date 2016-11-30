@@ -76,9 +76,10 @@ class Board:
 
     def printEnd(self, winner):
         if winner == 0:
-            print "TIE:\n", self.state
+            print "TIE"
         else:
             print winner, "WON"
+        self.display()
 
     def run(self):
         self.currentPlayer = 1
@@ -115,7 +116,7 @@ class Board:
 
 class Agent:
     # A structure for agents.
-    # Your program should inherit this (as seen in randomChoose), meaning that it should have an action(self, state, turn, playerNum) that returns a position (an array self.dimension long)
+    # Your program should inherit this (as seen in RandomChoose), meaning that it should have an action(self, state, turn, playerNum) that returns a position (an array self.dimension long)
     # We should probably find a way to restrict the output of action
     __metaclass__ = ABCMeta
     def __init__(self, numPlayers, size, dimension, limit, debugMode=False):
@@ -129,7 +130,7 @@ class Agent:
 
 class RandomChoose(Agent):
     def __init__(self, boardParams, debugMode=False):
-        super(randomChoose, self).__init__(*boardParams, debugMode=debugMode)
+        super(RandomChoose, self).__init__(*boardParams, debugMode=debugMode)
 
     def action(self, state, turn, playerNum):
         availableSpots = []
@@ -142,7 +143,7 @@ class RandomChoose(Agent):
 
 class Human(Agent):
     def __init__(self, boardParams, debugMode=False):
-        super().__init__(boardParams, debugMode=debugMode)
+        super(Human, self).__init__(boardParams, debugMode=debugMode)
 
     def action(self, state, turn, playerNum):
         print "Current State"
@@ -159,7 +160,7 @@ class Human(Agent):
 def compileAgents(boardParams, numRand=0, numHuman=0):
     agents = []
     for i in range(numRand):
-        agents.append(randomChoose(boardParams))
+        agents.append(RandomChoose(boardParams))
     for i in range(numHuman):
         agents.append(human(boardParams))
     return agents
