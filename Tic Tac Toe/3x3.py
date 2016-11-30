@@ -1,23 +1,38 @@
 import numpy as np
 from abc import ABCMeta, abstractmethod
-import re
+import re, random
+
+boardParams = [2, 3, 2, 10]
+# boardParams = {"numPlayers" : 2, "size" : 3, "dimension" : 2, "limit" : 10}
 
 class Board:
-    def __init__(self, agents, boardParams=[2, 3, 2, 10], debugMode=False):
+    def __init__(self, boardParams=boardParams, numGames=1, debugMode=False):
         if type(boardParams) == hash:
             self.numPlayers, self.size, self.dimension, self.limit = boardParams["numPlayers"], boardParams["size"], boardParams["dimension"], boardParams["limit"] # **boardParams
         elif type(boardParams) == list:
             self.numPlayers, self.size, self.dimension, self.limit = boardParams[0], boardParams[1], boardParams[2], boardParams[3] # *boardParams
-        self.agents = agents #work on initializing agents
-        self.state = np.zeros(tuple([self.size]*self.dimension), dtype=np.int)
-        self.rowIndices = self.findRowIndeces()
-        self.emptyIndices = self.rowIndices[:self.size] # Unfinished. Quick way to know which spaces are empty
-        print self.run(doPrint=debugMode)
 
-    # def compileAgents
+        self.debugMode = debugMode
+        self.numGames = numGames
+        self.rowIndices = self.findRowIndeces() # A list of all the rows, where each row is represented by a list of the positions of its elements
+        self.winners = [] # record of who won every game
+        self.reset()
+
+    def setAgents(self, agents):
+        self.agents = agents
+        self.runGames(self.numGames)
+
+    def reset(self):
+        self.currentPlayer = 1
+        self.state = np.zeros(tuple([self.size]*self.dimension), dtype=np.int)
+        self.emptyIndices = self.rowIndices[:self.size] # Unfinished. Quick way to know which spaces are empty. Possibly send to players in boardInfo
+
+    def display(self):
+        print self.state
 
     def findRowIndeces(self):
-        # Compile a list of all the rows, where each row is represented by a list of the positions of its elements
+        # Compiles row indices as described in __init__
+        # Currently only 2d
         rows, diag1, diag2 = [], [], []
         for i in range(self.size):
             row, column = [], []
@@ -31,9 +46,6 @@ class Board:
         rows.append(diag1)
         rows.append(diag2)
         return rows
-
-    def display(self):
-        print self.state
 
     def act(self, position, player=0):
         # Make sure everything is what it needs to be
@@ -54,7 +66,7 @@ class Board:
             if player != 0:
                 if all(map(lambda i: self.state[i] == player, row[0:])):
                     return int(player)
-        # Checks if there is empty room left
+        # Checks if there is empty room left, and if there isn't, declares a tie (represented as 'player 0' winnning)
         # TODO: Can be optimized - just do when turns run out. Also, can use info from the for loop above.
         for i in range(self.size):
             for j in range(self.size):
@@ -62,37 +74,42 @@ class Board:
                     return
         return 0
 
-    def end(self, winner):
+    def printEnd(self, winner):
         if winner == 0:
             print "TIE:\n", self.state
         else:
             print winner, "WON"
 
-    def run(self, doPrint=False):
+    def run(self):
         self.currentPlayer = 1
 
         for turn in range(self.size ** self.dimension):
-            if doPrint: print "Player {}, make your move.".format(self.currentPlayer)
+            if self.debugMode: print "Player {}, make your move.".format(self.currentPlayer)
 
             boardInfo = (self.state, turn, self.currentPlayer) # self.emptyIndices, self.rowIndices)
             move = self.agents[self.currentPlayer-1].action(*boardInfo)
             moveIsLegal = self.act(move)
 
             if not moveIsLegal:
-                if doPrint: print "Invalid Move by Player {}".format(self.currentPlayer)
+                if self.debugMode: print "Invalid Move by Player {}".format(self.currentPlayer)
                 for i in xrange(self.limit):
                     move = self.agents[self.currentPlayer-1].action(*boardInfo)
                     moveIsLegal = self.act(move)
                     if moveIsLegal: break
-                if doPrint: print "Too many invalid moves. Terminating game"
+                if self.debugMode: print "Too many invalid moves. Terminating game"
                 return False
 
             winner = self.checkWin()
-            if type(winner) == int:
-                self.end(winner)
+            if type(winner) == int: # checkWin returns None type if there is no winner, 0 for a tie, and playerNum for victory
+                if self.debugMode: self.printEnd(winner)
                 return winner
 
             self.currentPlayer = (self.currentPlayer % self.numPlayers) + 1
+
+    def runGames(self, numGames):
+        for i in xrange(numGames):
+            self.winners.append(self.run())
+        return self.winners
 
 
 
@@ -110,15 +127,16 @@ class Agent:
 
 class randomChoose(Agent):
     def __init__(self, boardParams, debugMode=False):
-        print boardParams
         super(randomChoose, self).__init__(*boardParams, debugMode=debugMode)
 
     def action(self, state, turn, playerNum):
+        availableSpots = []
         for i in range(self.size):
             for j in range(self.size):
                 if state[i,j] == 0:
+                    availableSpots.append((i,j))
                     if self.debugMode: print i,j
-                    return (i,j)
+        return random.choice(availableSpots)
 
 class human(Agent):
     def __init__(self, boardParams, debugMode=False):
@@ -136,16 +154,16 @@ class human(Agent):
             position[i] = int(position[i])
         return position
 
+def compileAgents(boardParams, numRand=0, numHuman=0):
+    agents = []
+    for i in range(numRand):
+        agents.append(randomChoose(boardParams))
+    for i in range(numHuman):
+        agents.append(human(boardParams))
+    return agents
 
-agents = []
-boardParams = [2, 3, 2, 10]
-# [numPlayers=2, size=3, dimension=2, limit=10]
-# boardParams = {"numPlayers" : 2, "size" : 3, "dimension" : 2, "limit" : 10}
-for i in range(3):
-    agents.append(randomChoose(boardParams))
-print agents
-ticTac = Board(agents, boardParams, debugMode=True)
+ticTac = Board(boardParams, debugMode=True)
+agents = compileAgents(boardParams, numRand=2)
+ticTac.setAgents(agents)
+
 # ticTac.display()
-# ticTac.act((1,1))
-ticTac.display()
-# ticTac.checkWin()
