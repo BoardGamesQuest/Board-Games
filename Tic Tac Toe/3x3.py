@@ -114,7 +114,9 @@ class Board:
 
 
 class Agent:
-    # A structure for agents. Your program should inherit this (as seen in randomChoose), meaning that it should
+    # A structure for agents.
+    # Your program should inherit this (as seen in randomChoose), meaning that it should have an action(self, state, turn, playerNum) that returns a position (an array self.dimension long)
+    # We should probably find a way to restrict the output of action
     __metaclass__ = ABCMeta
     def __init__(self, numPlayers, size, dimension, limit, debugMode=False):
         self.numPlayers, self.size, self.dimension, self.limit = numPlayers, size, dimension, limit
@@ -125,7 +127,7 @@ class Agent:
         return [0]*self.dimension
 
 
-class randomChoose(Agent):
+class RandomChoose(Agent):
     def __init__(self, boardParams, debugMode=False):
         super(randomChoose, self).__init__(*boardParams, debugMode=debugMode)
 
@@ -138,7 +140,7 @@ class randomChoose(Agent):
                     if self.debugMode: print i,j
         return random.choice(availableSpots)
 
-class human(Agent):
+class Human(Agent):
     def __init__(self, boardParams, debugMode=False):
         super().__init__(boardParams, debugMode=debugMode)
 
@@ -165,5 +167,3 @@ def compileAgents(boardParams, numRand=0, numHuman=0):
 ticTac = Board(boardParams, debugMode=True)
 agents = compileAgents(boardParams, numRand=2)
 ticTac.setAgents(agents)
-
-# ticTac.display()
