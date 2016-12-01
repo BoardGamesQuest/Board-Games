@@ -99,7 +99,8 @@ class Board:
                     if moveIsLegal: break
                 if self.debugMode: print "Too many invalid moves. Terminating game"
                 return False
-
+            if self.debugMode:
+                self.display()
             winner = self.checkWin()
             if type(winner) == int: # checkWin returns None type if there is no winner, 0 for a tie, and playerNum for victory
                 if self.debugMode: self.printEnd(winner)
@@ -143,15 +144,15 @@ class RandomChoose(Agent):
 
 class Human(Agent):
     def __init__(self, boardParams, debugMode=False):
-        super(Human, self).__init__(boardParams, debugMode=debugMode)
+        super(Human, self).__init__(*boardParams, debugMode=debugMode)
 
     def action(self, state, turn, playerNum):
-        print "Current State"
-        print self.state
+        # print "Current State"
+        # print state
         userInput = raw_input('It\'s turn {}. Your Move, Player {}: '.format(turn, playerNum))
         # Cleaning input to standardized form
-        userInput.replace(userInput, r"$[0-9]* $[0-9]*", r"\1,\2") # fix for higher dimension
-        userInput = re.replace(userInput, r"\[\] ", "")
+        # userInput.replace(userInput, r"$[0-9]* $[0-9]*", r"\1,\2") # fix for higher dimension
+        # userInput = re.replace(userInput, r"\[\] ", "")
         position = userInput.split(',')
         for i in range(len(position)):
             position[i] = int(position[i])
@@ -162,9 +163,9 @@ def compileAgents(boardParams, numRand=0, numHuman=0):
     for i in range(numRand):
         agents.append(RandomChoose(boardParams))
     for i in range(numHuman):
-        agents.append(human(boardParams))
+        agents.append(Human(boardParams))
     return agents
 
 ticTac = Board(boardParams, debugMode=True)
-agents = compileAgents(boardParams, numRand=2)
+agents = compileAgents(boardParams, numRand=1, numHuman=1)
 ticTac.setAgents(agents)
