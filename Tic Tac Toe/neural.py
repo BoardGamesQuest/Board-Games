@@ -47,26 +47,19 @@ class Board:
         rows.append(diag2)
         return rows
 
-    def act(self, position):
+    def act(self, position, player=0):
+        # Make sure everything is what it needs to be
+        if player == 0:
+            player = self.currentPlayer
         if type(position) != tuple:
             position = tuple(position)
-        if self.isLegal(position, self.currentPlayer):
-            self.state[position] = self.currentPlayer
-            return True # Valid move
-        return False
 
-    def isLegal(self, position, player):
-        if len(position) != self.dimension:
-            return False
-        for i in position:
-            if i >= self.size or i < 0:
-                return False
         if self.state[position] != 0:
             return False # Position taken, invalid move
-        return True
+        self.state[position] = player
+        return True # Valid move
 
     def checkWin(self):
-        # TODO: Optimize knowing the last move and player who made it, only check the appropriate rows. If all full, run checkTie()
         # Checks every row for winner
         for row in self.rowIndices:
             player = self.state[row[0]]
@@ -99,27 +92,17 @@ class Board:
             moveIsLegal = self.act(move)
 
             if not moveIsLegal:
+                if self.debugMode: print "Invalid Move by Player {}".format(self.currentPlayer)
                 for i in xrange(self.limit):
-                    if self.debugMode: print "Invalid Move by Player {}".format(self.currentPlayer)
-                    self.agents[self.currentPlayer-1].illegal(move)
                     move = self.agents[self.currentPlayer-1].action(*boardInfo)
                     moveIsLegal = self.act(move)
                     if moveIsLegal: break
                 if self.debugMode: print "Too many invalid moves. Terminating game"
                 return False
-            if self.debugMode:
-                self.display()
+
             winner = self.checkWin()
             if type(winner) == int: # checkWin returns None type if there is no winner, 0 for a tie, and playerNum for victory
                 if self.debugMode: self.printEnd(winner)
-                if winner == 0:
-                    for i in range(self.numPlayers):
-                        self.agents[i].end(0)
-                for i in range(self.numPlayers):
-                    if i == winner:
-                        self.agents[i].end(1)
-                    else:
-                        self.agents[i].end(-1)
                 return winner
 
             self.currentPlayer = (self.currentPlayer % self.numPlayers) + 1
@@ -136,15 +119,9 @@ class Agent:
     # Your program should inherit this (as seen in RandomChoose), meaning that it should have an action(self, state, turn, playerNum) that returns a position (an array self.dimension long)
     # We should probably find a way to restrict the output of action
     __metaclass__ = ABCMeta
-    def __init__(self, boardParams, debugMode=False):
-        self.numPlayers, self.size, self.dimension, self.limit = boardParams
+    def __init__(self, numPlayers, size, dimension, limit, debugMode=False):
+        self.numPlayers, self.size, self.dimension, self.limit = numPlayers, size, dimension, limit
         self.debugMode = debugMode
-
-    def illegal(self, move):
-        return
-
-    def end(self, reward):
-        return
 
     @abstractmethod
     def action(self, state, turn, playerNum):
@@ -152,6 +129,8 @@ class Agent:
 
 
 class RandomChoose(Agent):
+    def __init__(self, boardParams, debugMode=False):
+        super(RandomChoose, self).__init__(*boardParams, debugMode=debugMode)
 
     def action(self, state, turn, playerNum):
         availableSpots = []
@@ -163,27 +142,119 @@ class RandomChoose(Agent):
         return random.choice(availableSpots)
 
 class Human(Agent):
+    def __init__(self, boardParams, debugMode=False):
+        super(Human, self).__init__(boardParams, debugMode=debugMode)
 
     def action(self, state, turn, playerNum):
-        # print "Current State"
-        # print state
+        print "Current State"
+        print self.state
         userInput = raw_input('It\'s turn {}. Your Move, Player {}: '.format(turn, playerNum))
         # Cleaning input to standardized form
-        # userInput.replace(userInput, r"$[0-9]* $[0-9]*", r"\1,\2") # fix for higher dimension
-        # userInput = re.replace(userInput, r"\[\] ", "")
+        userInput.replace(userInput, r"$[0-9]* $[0-9]*", r"\1,\2") # fix for higher dimension
+        userInput = re.replace(userInput, r"\[\] ", "")
         position = userInput.split(',')
         for i in range(len(position)):
             position[i] = int(position[i])
         return position
+
+class NeuralCoords(Agent):
+    def __init__(self, boardParams, debugMode=False, numHidden=1, learningRate=3):
+        super(NeuralCoords, self).__init__(boardParams, debugMode=debugMode)
+        self.learningRate, self.numHidden = learningRate, numHidden
+        self.inputLength = self.size*2 + 2
+        self.initializeWeights()
+
+    # Input a list of rows (8 long, or size*2 + 2)
+    # List of rows dotted with params in first layer? (loses some information)
+    # Neural netted
+    # Output? 9 neurons for classification? 2 neurons for coordinate of position?
+    def initializeWeights(self):
+        self.firstW = np.random.rand(self.inputLength, self.inputLength, self.size) # Add biases per row dotted? per neuron?
+        self.firstB = np.random.rand(self.inputLength, self.inputLength)
+        self.hidW = np.random.rand(self.numHidden, self.inputLength, self.inputLength)
+        self.hidB = np.random.rand(self.numHidden, self.inputLength)
+        self.outW = np.random.rand(self.dimension, self.inputLength)
+        self.outB = np.random.rand(self.dimension)
+
+    def compute(self, X, allActivations=False):
+        firstActs = np.array()
+        for n in range(inputLength):
+            firstActs.append(np.dot(firstW[n], X))
+
+class NeuralQ(Agent):
+    def __init__(self, boardParams, debugMode=False, numHidden=1, learningRate=3):
+        super(NeuralQ, self).__init__(boardParams, debugMode=debugMode)
+        self.learningRate, self.numHidden = learningRate, numHidden
+        self.inputLength = self.size*2 + 2
+        self.initializeWeights()
+
+    # Input a list of rows (8 long, or size*2 + 2)
+    # List of rows dotted with params in first layer? (loses some information)
+    # Neural netted
+    # Output? 9 neurons for classification? 2 neurons for coordinate of position?
+    def initializeWeights(self):
+        self.firstW = np.random.rand(self.inputLength, self.inputLength, self.size) # Add biases per row dotted? per neuron?
+        self.firstB = np.random.rand(self.inputLength)
+        self.hidW = np.random.rand(self.numHidden, self.inputLength, self.inputLength)
+        self.hidB = np.random.rand(self.numHidden, self.inputLength)
+        self.outW = np.random.rand(self.inputLength)
+        self.outB = np.random.rand()
+
+    def compute(self, X, allActivations=False):
+        firstActs = np.array()
+        for n in range(inputLength):
+            comps = np.dot(firstW[n], np.transpose(X))
+            activations = np.add(np.sum(comps, axis=1), firstB)
+            firstActs.append()
+
+            # for i in range(inputLength):
+            #     dot = np.dot(X[i], firstW[n][i])
+
+
+        for layer in self.W:
+            y = np.array([np.dot(x, w[1:]) + w[0] for w in layer])
+            y = np.reciprocal(np.add(np.exp(np.negative(y)), 1))
+            if allActivations:
+                X = np.concatenate((X, np.transpose([[yi] for yi in y])))
+            x = y
+        if allActivations:
+            return X
+        return x
+
+    def backprop(self, x, y):
+        activations = self.efficientCompute(x, allActivations=True)
+        delta = np.empty((self.numLayers, self.height))
+        dCost = np.subtract(activations[self.numLayers], y)
+        dActivations = np.multiply(activations, np.subtract(1, activations))
+        delta[self.numLayers-1] = np.multiply(dCost, dActivations[self.numLayers])
+        for layer in reversed(range(self.numLayers-1)):
+            delta[layer] = np.multiply(np.dot(np.transpose(self.W[layer+1,:,1:]), delta[layer+1]), dActivations[layer+1])
+        self.W[:,:,0] = np.subtract(self.W[:,:,0], delta)
+        self.W[:,:,1:] = np.subtract(self.W[:,:,1:], self.learningRate * np.multiply(activations[1:], delta))
+
+    def normalizeInput(state, playerNum):
+        for i in range(self.size):
+            for j in range(self.size):
+                if not (state[i,j] == 0 or state[i,j] == playerNum):
+                    state[i,j] = -1 # Only two player
+        return state
+
+    def action(self, state, turn, playerNum):
+        state = normalizeInput(state, playerNum)
+
+
+
+
+
 
 def compileAgents(boardParams, numRand=0, numHuman=0):
     agents = []
     for i in range(numRand):
         agents.append(RandomChoose(boardParams))
     for i in range(numHuman):
-        agents.append(Human(boardParams))
+        agents.append(human(boardParams))
     return agents
 
 ticTac = Board(boardParams, debugMode=True)
-agents = compileAgents(boardParams, numRand=1, numHuman=1)
+agents = compileAgents(boardParams, numRand=2)
 ticTac.setAgents(agents)
