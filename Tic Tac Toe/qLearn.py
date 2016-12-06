@@ -6,21 +6,44 @@ from main import Agent, Board
 boardParams = main.boardParams
 # boardParams = {"numPlayers" : 2, "size" : 3, "dimension" : 2, "limit" : 10}
 
-class Q(Agnet):
+class Q(Agent):
     def __init__(self, boardParams, learningRate=0.1, discountRate=0.99, randomness=0.4, debugMode=False):
         super(NeuralCoords, self).__init__(boardParams, debugMode=debugMode)
         self.learningRate, self.discountRate, self.randomness = learningRate, discountRate, randomness
-        self.qVals = np.zeros((self.size,)*self.dimension + (self.numPlayers+1) + (self.size,)*self.dimension) # First is for current state, second is for action # Use dictionary
+        # self.qVals = np.zeros((self.size,)*self.dimension + (self.numPlayers+1) + (self.size,)*self.dimension) # First is for current state, second is for action
+        self.qVals = {}
 
+    def qVal(state, move):
+        return self.qVals.get((state, move), default=0)
     # Should the Q function only calculate when it's about to be my turn? Yes
-    def action(self, state, turn, playerNum, possibleMoves):
-        bestMove = (0)*dimension
-        bestVal = 0
-        for move in possibleMoves:
-            val = self.qVals[*self.state, *move]
+    # Look further ahead?
+
+    def nextState(state, move):
+        state[move] = 1
+
+    def bestQVal(state, possibleMoves):
+        bestMove = possibleMoves[0]
+        bestVal = self.qVal(bestMove)
+        for move in possibleMoves[1:]:
+            val = self.qVal(state, move)
             if val > bestVal
-                bestVal = val
                 bestMove = move
+                bestVal = val
+        return bestVal #, bestMove
+
+    def action(self, state, turn, playerNum, possibleMoves):
+        bestMove = bestVal = 0
+        for i in range(len(possibleMoves)):
+            val = self.qVal(state, possibleMoves[i])
+            newState = np.negative(self.nextState(state, possibleMoves[i]))
+            newMoves = possibleMoves[:i] + possibleMoves[i+1:]
+            val -= self.discountRate * bestQVal(state, newMoves) # Opponent's best move
+            if val > bestVal
+                bestMove, bestVal = i, val
+        return possibleMoves[bestMove]
+
+    
+
 
 
 class NeuralCoords(Agent):
