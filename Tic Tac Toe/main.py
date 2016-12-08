@@ -1,6 +1,6 @@
 import numpy as np
 from abc import ABCMeta, abstractmethod
-import re, random
+import re, random, copy
 
 boardParams = [2, 3, 2, 10]
 # boardParams = {"numPlayers" : 2, "size" : 3, "dimension" : 2, "limit" : 10}
@@ -11,32 +11,34 @@ class Board:
             self.numPlayers, self.size, self.dimension, self.limit = boardParams["numPlayers"], boardParams["size"], boardParams["dimension"], boardParams["limit"] # **boardParams
         elif type(boardParams) == list:
             self.numPlayers, self.size, self.dimension, self.limit = boardParams[0], boardParams[1], boardParams[2], boardParams[3] # *boardParams
+        else:
+            self.numPlayers, self.size, self.dimension, self.limit = boardParams
 
         self.debugMode = debugMode
         self.numGames = numGames
-        self.rowIndices = self.findRowIndeces() # A list of all the rows, where each row is represented by a list of the positions of its elements
+        self.rowIndices, self.allIndices = self.findRowIndices() # A list of all the rows, where each row is represented by a list of the positions of its elements
         self.winners = [] # record of who won every game
         self.reset()
 
     def setAgents(self, agents):
         self.agents = agents
-        self.runGames(self.numGames)
 
     def reset(self):
         self.currentPlayer = 1
         self.state = np.zeros(tuple([self.size]*self.dimension), dtype=np.int)
-        self.emptyIndices = self.rowIndices[:self.size] # Unfinished. Quick way to know which spaces are empty. Possibly send to players in boardInfo
+        self.emptyIndices = copy.deepcopy(self.allIndices)
 
     def display(self):
         print self.state
 
-    def findRowIndeces(self):
+    def findRowIndices(self):
         # Compiles row indices as described in __init__
         # Currently only 2d
-        rows, diag1, diag2 = [], [], []
+        rows, diag1, diag2, total = [], [], [], []
         for i in range(self.size):
             row, column = [], []
             for j in range(self.size):
+                total.append((i,j))
                 row.append((i,j))
                 column.append((j,i))
             rows.append(row)
@@ -45,25 +47,16 @@ class Board:
             diag2.append((i,self.size-i-1))
         rows.append(diag1)
         rows.append(diag2)
-        return rows
+        return rows, total
 
     def act(self, position):
         if type(position) != tuple:
             position = tuple(position)
-        if self.isLegal(position, self.currentPlayer):
+        if position in self.emptyIndices: # Valid move
             self.state[position] = self.currentPlayer
-            return True # Valid move
+            self.emptyIndices.remove(position)
+            return True
         return False
-
-    def isLegal(self, position, player):
-        if len(position) != self.dimension:
-            return False
-        for i in position:
-            if i >= self.size or i < 0:
-                return False
-        if self.state[position] != 0:
-            return False # Position taken, invalid move
-        return True
 
     def checkWin(self):
         # TODO: Optimize knowing the last move and player who made it, only check the appropriate rows. If all full, run checkTie()
@@ -75,11 +68,10 @@ class Board:
                     return int(player)
         # Checks if there is empty room left, and if there isn't, declares a tie (represented as 'player 0' winnning)
         # TODO: Can be optimized - just do when turns run out. Also, can use info from the for loop above.
-        for i in range(self.size):
-            for j in range(self.size):
-                if self.state[i,j] == 0:
-                    return
-        return 0
+        # if len(self.emptyIndices) == 0:
+        #     return 0
+
+        return "no winner"
 
     def printEnd(self, winner):
         if winner == 0:
@@ -90,11 +82,10 @@ class Board:
 
     def run(self):
         self.currentPlayer = 1
-
         for turn in range(self.size ** self.dimension):
             if self.debugMode: print "Player {}, make your move.".format(self.currentPlayer)
 
-            boardInfo = (self.state, turn, self.currentPlayer) # self.emptyIndices, self.rowIndices)
+            boardInfo = (self.state, turn, self.currentPlayer, self.emptyIndices) # self.emptyIndices, self.rowIndices)
             move = self.agents[self.currentPlayer-1].action(*boardInfo)
             moveIsLegal = self.act(move)
 
@@ -107,24 +98,29 @@ class Board:
                     if moveIsLegal: break
                 if self.debugMode: print "Too many invalid moves. Terminating game"
                 return False
-            if self.debugMode:
-                self.display()
+            if self.debugMode: self.display()
+
             winner = self.checkWin()
             if type(winner) == int: # checkWin returns None type if there is no winner, 0 for a tie, and playerNum for victory
                 if self.debugMode: self.printEnd(winner)
-                if winner == 0:
-                    for i in range(self.numPlayers):
-                        self.agents[i].end(0)
+                # if winner == 0:
+                #     for i in range(self.numPlayers):
+                #         self.agents[i].end(0, self.state, self.currentPlayer, move)
                 for i in range(self.numPlayers):
                     if i == winner:
-                        self.agents[i].end(1)
+                        self.agents[i].end(1, self.currentPlayer, i, self.state, move)
                     else:
-                        self.agents[i].end(-1)
+                        self.agents[i].end(-1, self.currentPlayer, i, self.state, move)
                 return winner
 
             self.currentPlayer = (self.currentPlayer % self.numPlayers) + 1
 
-    def runGames(self, numGames):
+        if self.debugMode: self.printEnd(0)
+        for i in range(self.numPlayers):
+            self.agents[i].end(0, self.state, self.currentPlayer, move)
+        return 0
+
+    def runGames(self, numGames=1):
         for i in xrange(numGames):
             self.winners.append(self.run())
         return self.winners
@@ -143,28 +139,28 @@ class Agent:
     def illegal(self, move):
         return
 
-    def end(self, reward):
+    def end(self, reward, winner, playerNum, state, move):
         return
 
     @abstractmethod
-    def action(self, state, turn, playerNum):
+    def action(self, state, turn, playerNum, legalMoves):
         return [0]*self.dimension
 
 
 class RandomChoose(Agent):
 
-    def action(self, state, turn, playerNum):
-        availableSpots = []
-        for i in range(self.size):
-            for j in range(self.size):
-                if state[i,j] == 0:
-                    availableSpots.append((i,j))
-                    if self.debugMode: print i,j
-        return random.choice(availableSpots)
+    def action(self, state, turn, playerNum, legalMoves):
+        # availableSpots = []
+        # for i in range(self.size):
+        #     for j in range(self.size):
+        #         if state[i,j] == 0:
+        #             availableSpots.append((i,j))
+        #             if self.debugMode: print i,j
+        return random.choice(legalMoves)
 
 class Human(Agent):
 
-    def action(self, state, turn, playerNum):
+    def action(self, state, turn, playerNum, legalMoves):
         # print "Current State"
         # print state
         userInput = raw_input('It\'s turn {}. Your Move, Player {}: '.format(turn, playerNum))
@@ -185,5 +181,6 @@ def compileAgents(boardParams, numRand=0, numHuman=0):
     return agents
 
 ticTac = Board(boardParams, debugMode=True)
-agents = compileAgents(boardParams, numRand=1, numHuman=1)
+agents = compileAgents(boardParams, numRand=2, numHuman=0)
 ticTac.setAgents(agents)
+ticTac.runGames()
