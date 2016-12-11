@@ -14,14 +14,12 @@ ticTac.setAgents(agents)
 ticTac.runGames()
 
 class Q(Agent):
-    def __init__(self, boardParams, learningRate=0.1, discountRate=0.99, randomness=0.2, debugMode=False):
+    def __init__(self, boardParams, learningRate=1, discountRate=1, randomness=0.2, debugMode=False):
         super(NeuralCoords, self).__init__(boardParams, debugMode=debugMode)
         self.learningRate, self.discountRate, self.randomness = learningRate, discountRate, randomness
         # self.qVals = np.zeros((self.size,)*self.dimension + (self.numPlayers+1) + (self.size,)*self.dimension) # First is for current state, second is for action
         self.qVals = {}
 
-    def qVal(self, state, move):
-        return self.qVals.get((state, move), default=0)
     # Should the Q function only calculate when it's about to be my turn? Yes
     # Look further ahead?
 
@@ -39,9 +37,9 @@ class Q(Agent):
 
     def bestQVal(self, state, possibleMoves):
         bestMove = possibleMoves[0]
-        bestVal = self.qVal(bestMove)
+        bestVal = self.qVals.get((state, bestMove), default=0)
         for move in possibleMoves[1:]:
-            val = self.qVal(state, move)
+            val = self.qVals.get((state, move), default=0)
             if val > bestVal:
                 bestMove = move
                 bestVal = val
@@ -49,14 +47,19 @@ class Q(Agent):
 
     def action(self, state, turn, playerNum, possibleMoves):
         state = self.boolState(state, playerNum)
-        bestMove = bestVal = 0
+        bestMove = bestTotalVal = bestVal = bestNextVal = 0
         for i in range(len(possibleMoves)):
-            val = self.qVal(state, possibleMoves[i])
+            val = self.qVals.get((state, possibleMoves[i]), default=0)
             newState = np.negative(self.nextState(state, possibleMoves[i]))
             newMoves = possibleMoves[:i] + possibleMoves[i+1:]
-            val -= self.discountRate * bestQVal(state, newMoves) # Opponent's best move
-            if val > bestVal:
-                bestMove, bestVal = i, val
+            nextVal = self.discountRate * bestQVal(newState, newMoves) # Opponent's best move
+            totalVal = val - nextVal
+            if totalVal > bestTotalVal:
+                bestMove, bestTotalVal, bestVal, bestNextVal = i, totalVal, val, nextVal
+        bestMove = possibleMoves[bestMove]
+        self.qVals[state, bestMove] = bestVal + self.learningRate * (bestTotalVal - bestVal)
         return possibleMoves[bestMove]
 
     def end(self, reward, winner, playerNum, state, move):
+        state = self.boolState(state, playerNum)
+        self.qVals[(state, move)] = reward
