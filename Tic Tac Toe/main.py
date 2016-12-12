@@ -117,12 +117,16 @@ class Board:
 
         if self.debugMode: self.printEnd(0)
         for i in range(self.numPlayers):
-            self.agents[i].end(0, self.state, self.currentPlayer, move)
+            self.agents[i].end(0, self.currentPlayer, i, self.state, move)
         return 0
 
     def runGames(self, numGames=1):
         for i in xrange(numGames):
             self.winners.append(self.run())
+            self.reset()
+            if i % 100 == 0:
+                print "RUNNING GAME: ", i
+        if self.debugMode: print self.winners
         return self.winners
 
 
@@ -180,7 +184,7 @@ def compileAgents(boardParams, numRand=0, numHuman=0):
         agents.append(Human(boardParams))
     return agents
 
-ticTac = Board(boardParams, debugMode=True)
-agents = compileAgents(boardParams, numRand=2, numHuman=0)
-ticTac.setAgents(agents)
-ticTac.runGames()
+# ticTac = Board(boardParams, debugMode=True)
+# agents = compileAgents(boardParams, numRand=2, numHuman=0)
+# ticTac.setAgents(agents)
+# ticTac.runGames()
