@@ -4,13 +4,12 @@ import re, random, main, copy
 from main import Agent, Board
 
 class Q(Agent):
-    def __init__(self, boardParams, learningRate=0.8, discountRate=0.99, randomness=0.3, debugMode=False):
+    def __init__(self, boardParams, learningRate=0.99, discountRate=0.5, randomness=0.2, debugMode=False):
         super(Q, self).__init__(boardParams, debugMode=debugMode)
         self.learningRate, self.discountRate, self.randomness = learningRate, discountRate, randomness
-        # self.Q = np.zeros((self.size,)*self.dimension + (self.numPlayers+1) + (self.size,)*self.dimension) # First is for current state, second is for action
         self.Q, self.R = {}, {}
+        self.debugMode = debugMode
 
-    # Should the Q function only calculate when it's about to be my turn? Yes
     # Look further ahead?
 
     def boolState(self, State, player): # 2D
@@ -53,13 +52,11 @@ class Q(Agent):
 
     def updateQ(self, state, possibleMoves, move):
         if len(possibleMoves) <= 1: return
-        # print state
         newState = np.negative(self.nextState(state, move))
-        # print newState
-        # return
         newMoves = copy.deepcopy(possibleMoves)
         newMoves.remove(move)
         val = np.negative(self.discountRate * self.bestQ(newState, newMoves, returnVal=True)) # Opponent's best move
+        if self.debugMode: print val
         self.updateQVal(state, move, val)
 
     def end(self, reward, winner, playerNum, state, move):
@@ -67,7 +64,7 @@ class Q(Agent):
         oldState = np.negative(self.nextState(state, move, change=0))
         self.R[(str(oldState), move)] = reward
         self.updateQVal(oldState, move, reward)
-        # print self.Q.values()
+        if self.debugMode: print self.Q.values()
 
     def smartAction(self, state, turn, playerNum, possibleMoves):
         state = self.boolState(state, playerNum)
@@ -90,14 +87,31 @@ boardParams = main.boardParams
 
 
 
+deterministic = Q(boardParams, randomness=0.001)
+normal = Q(boardParams, randomness=0.2)
+rand = Q(boardParams, randomness=0.8)
+for agent in [deterministic, normal, rand]:
+    agents = main.compileAgents(boardParams, numRand=1) + [agent]
 
-agents = main.compileAgents(boardParams, numRand=1) + [Q(boardParams)]
-train = Board(boardParams) #, debugMode=True)
-train.setAgents(agents)
-trainWins = train.runGames(numGames=1000)
-print trainWins.count(2)
+    test = Board(boardParams)
+    test.setAgents(agents)
+    testWins = test.runGames(numGames=100)
+    print testWins.count(2)
 
-test = Board(boardParams) #, debugMode=True)
-test.setAgents(agents)
-testWins = test.runGames(numGames=100)
-print testWins.count(2)
+    train = Board(boardParams) #, debugMode=True)
+    train.setAgents(agents)
+    trainWins = train.runGames(numGames=300)
+    print trainWins.count(2)
+
+    agents[1].randomness = 0.001
+    test = Board(boardParams)
+    test.setAgents(agents)
+    testWins = test.runGames(numGames=100)
+    print testWins.count(2)
+    test.debugMode = True
+    agents[1].debugMode = True
+    test.runGames()
+
+
+
+# Testing with discount rate and qvals, I found that the q function is recording reward correctly, but only propogating losses one move and nothing else (sometimes multiple times?) 
