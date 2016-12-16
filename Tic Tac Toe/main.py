@@ -50,8 +50,6 @@ class Board:
         return rows, total
 
     def act(self, position):
-        if type(position) != tuple:
-            position = tuple(position)
         if position in self.emptyIndices: # Valid move
             self.state[position] = self.currentPlayer
             self.emptyIndices.remove(position)
@@ -87,6 +85,7 @@ class Board:
 
             boardInfo = (self.state, turn, self.currentPlayer, self.emptyIndices) # self.emptyIndices, self.rowIndices)
             move = self.agents[self.currentPlayer-1].action(*boardInfo)
+            if type(move) != tuple: move = tuple(move)
             moveIsLegal = self.act(move)
 
             if not moveIsLegal:
@@ -94,6 +93,7 @@ class Board:
                     if self.debugMode: print "Invalid Move by Player {}".format(self.currentPlayer)
                     self.agents[self.currentPlayer-1].illegal(move)
                     move = self.agents[self.currentPlayer-1].action(*boardInfo)
+                    if type(move) != tuple: move = tuple(move)
                     moveIsLegal = self.act(move)
                     if moveIsLegal: break
                 if self.debugMode: print "Too many invalid moves. Terminating game"
@@ -103,14 +103,11 @@ class Board:
             winner = self.checkWin()
             if type(winner) == int: # checkWin returns None type if there is no winner, 0 for a tie, and playerNum for victory
                 if self.debugMode: self.printEnd(winner)
-                # if winner == 0:
-                #     for i in range(self.numPlayers):
-                #         self.agents[i].end(0, self.state, self.currentPlayer, move)
                 for i in range(self.numPlayers):
                     if i == winner:
                         self.agents[i].end(1, self.currentPlayer, i, self.state, move)
                     else:
-                        self.agents[i].end(-1, self.currentPlayer, i, self.state, move)
+                        self.agents[i].end(-0.9, self.currentPlayer, i, self.state, move)
                 return winner
 
             self.currentPlayer = (self.currentPlayer % self.numPlayers) + 1
@@ -120,12 +117,13 @@ class Board:
             self.agents[i].end(0, self.currentPlayer, i, self.state, move)
         return 0
 
-    def runGames(self, numGames=1):
+    def runGames(self, numGames=1, shuffle=True):
         for i in xrange(numGames):
+            if i % 100 == 99:
+                print "RUNNING GAME: ", i+1
+            if shuffle: random.shuffle(self.agents)
             self.winners.append(self.run())
             self.reset()
-            if i % 100 == 0:
-                print "RUNNING GAME: ", i
         if self.debugMode: print self.winners
         return self.winners
 
@@ -137,7 +135,7 @@ class Agent:
     # We should probably find a way to restrict the output of action
     __metaclass__ = ABCMeta
     def __init__(self, boardParams, debugMode=False):
-        self.numPlayers, self.size, self.dimension, self.limit = boardParams
+        self.numPlayers, self.size, self.dimension, self.limit = self.boardParams = boardParams
         self.debugMode = debugMode
 
     def illegal(self, move):
