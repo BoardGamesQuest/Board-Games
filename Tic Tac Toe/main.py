@@ -6,7 +6,7 @@ boardParams = [2, 3, 2, 10]
 # boardParams = {"numPlayers" : 2, "size" : 3, "dimension" : 2, "limit" : 10}
 
 class Board:
-    def __init__(self, boardParams=boardParams, numGames=1, debugMode=False):
+    def __init__(self, boardParams=boardParams, debugMode=False):
         if type(boardParams) == hash:
             self.numPlayers, self.size, self.dimension, self.limit = boardParams["numPlayers"], boardParams["size"], boardParams["dimension"], boardParams["limit"] # **boardParams
         elif type(boardParams) == list:
@@ -15,7 +15,6 @@ class Board:
             self.numPlayers, self.size, self.dimension, self.limit = boardParams
 
         self.debugMode = debugMode
-        self.numGames = numGames
         self.rowIndices, self.allIndices = self.findRowIndices() # A list of all the rows, where each row is represented by a list of the positions of its elements
         self.winners = [] # record of who won every game
         self.reset()
@@ -96,8 +95,10 @@ class Board:
                     if type(move) != tuple: move = tuple(move)
                     moveIsLegal = self.act(move)
                     if moveIsLegal: break
-                if self.debugMode: print "Too many invalid moves. Terminating game"
-                return False
+                else: # If loop not broken
+                    if self.debugMode: print "Too many invalid moves. Terminating game"
+                    return False
+
             if self.debugMode: self.display()
 
             winner = self.checkWin()

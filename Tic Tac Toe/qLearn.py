@@ -4,7 +4,7 @@ import re, random, main, copy
 from main import Agent, Board
 
 class Q(Agent):
-    def __init__(self, boardParams, learningRate=0.9, discountRate=0.5, randomness=0.2, debugMode=False):
+    def __init__(self, boardParams, learningRate=0.3, discountRate=0.9, randomness=0.2, debugMode=False):
         super(Q, self).__init__(boardParams, debugMode=debugMode)
         self.learningRate, self.discountRate, self.randomness = learningRate, discountRate, randomness
         self.Q, self.R = {}, {}
@@ -76,10 +76,10 @@ class Q(Agent):
 
     def train(self, iterations, withRand=True):
         agents = [self, main.RandomChoose(self.boardParams)]
-        train = Board(boardParams)
+        train = Board(self.boardParams)
         train.setAgents(agents)
         trainWins = train.runGames(numGames=iterations)
-        return trainWins
+        return trainWins  #make efficient training
 
     def test(self, numGames, withRand=False, withLearn=False):
         if withLearn:
@@ -89,54 +89,20 @@ class Q(Agent):
             wasRand = copy.deepcopy(self.randomness)
             self.randomness = 0
         agents = [self, main.RandomChoose(self.boardParams)]
-        test = Board(boardParams)
+        test = Board(self.boardParams)
         test.setAgents(agents)
-        firstWins = test.runGames(numGames=numGames, shuffle=False).count(1)
+        firstWins = test.runGames(numGames=numGames, shuffle=False)
         agents = [agents[1], agents[0]]
         test.setAgents(agents)
-        secondWins = test.runGames(numGames=numGames, shuffle=False).count(2)
+        secondWins = test.runGames(numGames=numGames, shuffle=False)
         if withLearn:
             self.withLearn = wasWin
         if withRand:
             self.randomness = wasRand
-        return firstWins + secondWins #Only tests second player position currently
+        return firstWins.count(1) + secondWins.count(2), firstWins.count(0) + firstWins.count(0)
 
-
-boardParams = main.boardParams
-# boardParams = {"numPlayers" : 2, "size" : 3, "dimension" : 2, "limit" : 10}
-
-
-
-deterministic = Q(boardParams, randomness=0.001)
-normal = Q(boardParams, randomness=0.2)
-rand = Q(boardParams, randomness=0.8)
-
-print normal.test(100)
-normal.train(3000)
-print normal.test(100)
-
-normal.debugMode = True
-agents = main.compileAgents(boardParams, numHuman=1) + [normal]
-interactiveTest = Board(boardParams, debugMode=True)
-interactiveTest.setAgents(agents)
-interactiveTest.runGames(10)
-
-# for agent in [normal]:#[deterministic, normal, rand]:
-#     agents = main.compileAgents(boardParams, numRand=1) + [agent]
-#
-#     test = Board(boardParams)
-#     test.setAgents(agents)
-#     testWins = test.runGames(numGames=100)
-#     print testWins.count(2)
-#
-#     train = Board(boardParams) #, debugMode=True)
-#     train.setAgents(agents)
-#     trainWins = train.runGames(numGames=10000)
-#     print trainWins.count(2)
-#     #
-#     agents[1].randomness = 0.001
-#     test = Board(boardParams)
-#     test.setAgents(agents)
-#     testWins = test.runGames(numGames=100)
-#     print testWins.count(2)
-#
+    def interactiveTest(self):
+        agents = [main.Human(self.boardParams), self]
+        test = Board(self.boardParams, debugMode=True)
+        test.setAgents(agents)
+        test.runGames()
