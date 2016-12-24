@@ -33,7 +33,6 @@ class Q(Agent):
         for move in possibleMoves:
             val = self.Q.get((str(state), move), 0)
             if val > bestVal:
-                # print val, "VALLLLLLLLLL", move, state
                 bestMove, bestVal = move, val
         if returnVal:
             return bestVal
