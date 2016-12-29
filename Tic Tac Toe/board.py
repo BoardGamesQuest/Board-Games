@@ -51,6 +51,14 @@ class Board:
             return True
         return False
 
+    def act2(self, position):
+        if position in self.emptyIndices: # Valid move
+            self.state[position] = self.currentPlayer
+            self.emptyIndices.remove(position)
+            self.currentPlayer = (self.currentPlayer % self.numPlayers) + 1
+            return True
+        return False
+
     def checkWin(self):
         # TODO: Optimize knowing the last move and player who made it, only check the appropriate rows. If all full, run checkTie()
         # Checks every row for winner
@@ -61,8 +69,8 @@ class Board:
                     return int(player)
         # Checks if there is empty room left, and if there isn't, declares a tie (represented as 'player 0' winnning)
         # TODO: Can be optimized - just do when turns run out. Also, can use info from the for loop above.
-        # if len(self.emptyIndices) == 0:
-        #     return 0
+        if len(self.emptyIndices) == 0:
+            return 0
 
         return "no winner"
 
@@ -78,7 +86,7 @@ class Board:
         for turn in range(self.size ** self.dimension):
             if self.debugMode: print "Player {}, make your move.".format(self.currentPlayer)
 
-            boardInfo = (self.state, turn, self.currentPlayer, self.emptyIndices) # self.emptyIndices, self.rowIndices)
+            boardInfo = (self, self.state, turn, self.currentPlayer, self.emptyIndices) # self.emptyIndices, self.rowIndices)
             move = self.agents[self.currentPlayer-1].action(*boardInfo)
             if type(move) != tuple: move = tuple(move)
             moveIsLegal = self.act(move)

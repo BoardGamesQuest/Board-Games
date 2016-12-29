@@ -18,5 +18,5 @@ class Agent:
         return
 
     @abstractmethod
-    def action(self, state, turn, playerNum, legalMoves):
+    def action(self, board, state, turn, playerNum, legalMoves):
         return [0]*self.dimension

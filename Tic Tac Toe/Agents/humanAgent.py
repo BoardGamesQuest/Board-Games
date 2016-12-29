@@ -3,7 +3,7 @@ from abstractAgent import Agent
 
 class Human(Agent):
 
-    def action(self, state, turn, playerNum, legalMoves):
+    def action(self, board, state, turn, playerNum, legalMoves):
         # print "Current State"
         # print state
         userInput = raw_input('It\'s turn {}. Your Move, Player {}: '.format(turn, playerNum))

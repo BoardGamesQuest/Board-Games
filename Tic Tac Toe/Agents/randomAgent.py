@@ -3,7 +3,7 @@ from abstractAgent import Agent
 
 class RandomChoose(Agent):
 
-    def action(self, state, turn, playerNum, legalMoves):
+    def action(self, board, state, turn, playerNum, legalMoves):
         # availableSpots = []
         # for i in range(self.size):
         #     for j in range(self.size):
