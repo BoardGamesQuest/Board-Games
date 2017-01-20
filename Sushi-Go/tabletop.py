@@ -1,7 +1,7 @@
 import copy
+import random
 
-
-class Sushi:
+class SushiGo:
     def __init__(self, params, debugMode=False):
         if type(params) == list:
             self.numPlayers = params[0]
@@ -37,14 +37,38 @@ class Sushi:
 
 
 
-    def runGame():
 
+    def runGame():
+        numRound = 0
+        for player in self.players:
+            player.generateHand()
+        self.display()
+        while player.
 
 
 
 # not sure if a card class helps
+# I think we should just have files for Card and then subclasses for each card?
 class Card:
     def __init__(self, cardType):
+        self.cardType = cardType
+
+#class Nigiri(Card):
+#    def __init__(self, cardType,name, pointvalue):
+#        self.name = str(name)
+#        self.pointvalue = pointvalue
+#
+#class Sashimi(Card):
+#
+#class Dumpling(Card):
+#
+#class Wasabi(Card):
+#
+#class Maki(Card):
+#
+#class Tempura(Card):
+#
+#class Pudding(Card):
 
 
 class Player:
@@ -52,5 +76,12 @@ class Player:
         self.playerNum = playerNum
         self.hand = self.generateHand(numPlayers)
         self.board = []
+        self.score = 0
+    def scoreBoard():
+        for i in self.board:
+            if self.board[i].cardType == Nigiri
+                self.score += self.board[i].pointvalue
 
     def generateHand():
+        if len(self.hand < #formula for cards in hand gien numPlayers)
+            self.hand.append(random.choice([Card('nigiri'),Card('Sashimi')]))#may want to change if we want to incorporate the number of times a card appears in the deck
