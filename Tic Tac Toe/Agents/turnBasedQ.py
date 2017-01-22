@@ -1,6 +1,6 @@
 import numpy as np
 import random, copy
-from Agents.abstractAgent import Agent
+from abstractAgent import Agent
 
 class Q(Agent):
     def __init__(self, boardParams, learningRate=0.1, discountRate=0.9, randomness=0.2, debugMode=False):

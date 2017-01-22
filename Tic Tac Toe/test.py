@@ -1,5 +1,5 @@
 from board import Board, boardParams
-from newQ import Q
+from Agents.turnBasedQ import Q
 
 # boardParams = {"numPlayers" : 2, "size" : 3, "dimension" : 2, "limit" : 10}
 
