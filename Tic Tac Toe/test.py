@@ -9,7 +9,7 @@ from newQ import Q
 board = Board(boardParams)
 alg = Q(boardParams)
 print board.test(alg, 500)
-board.train(alg, numGames=10000)
+board.train(alg, numGames=50000)
 print board.test(alg, 500)
 board.interactiveTest(alg)
 # rand = Q(boardParams, randomness=0.8)

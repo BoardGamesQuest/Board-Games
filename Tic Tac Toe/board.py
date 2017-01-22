@@ -178,55 +178,64 @@ class Board:
             if i % 1000 == 0:
                 print "RUNNING GAME: ", i
 
-            goingSecond = np.random.choice([True, False])
-            winner = 0
+            # goingSecond = np.random.choice([True, False])
+            # winner = 0
             state = np.zeros([3,3], dtype=np.int)
             emptyIndices = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1), (2,2)]
             numEmpty = 9
 
             # Make less random later. Weighted moves
-            # for turn in xrange(9):
-            #     move = emptyIndices.pop(np.random.randint(numEmpty))
-            #     numEmpty = np.subtract(numEmpty, 1)
-            #     newState = np.negative(state)
-            #     newState[move] = -1
-            #     agent.train(newState, state, move, emptyIndices)
-            #     if self.checkWinSpecific(newState, move):
-            #         agent.won(state, move, 1)
-            #         newState[move] = 0
-            #         agent.won(newState, move, -1)
-            #         break
-            #     state = newState
-
-            if goingSecond:
+            for turn in xrange(8):
                 move = emptyIndices.pop(np.random.randint(numEmpty))
-                state[move] = -1
                 numEmpty = np.subtract(numEmpty, 1)
-
-            for turn in xrange(4):
-                move = emptyIndices.pop(np.random.randint(numEmpty))
-                oldState = np.negative(state)
-                state[move] = 1
-                if self.checkWinSpecific(state, move):
-                    winner = 1
+                newState = np.negative(state)
+                newState[move] = -1
+                agent.train(newState, state, move, emptyIndices)
+                if self.checkWinSpecific(newState, move):
+                    agent.won(state, move, 1)
+                    # newState[move] = 0
+                    # agent.won(newState, move, -1)
                     break
-                agent.train(state, oldState, move, emptyIndices)
-                numEmpty = np.subtract(numEmpty, 1)
-                oldState[move] = 1
-
-                move = emptyIndices.pop(np.random.randint(numEmpty))
-                state[move] = -1
-                # oldState[move] = 1 train on opponent's rand move. Maybe even just run one move (not 2) until end
-                if self.checkWinSpecific(state, move):
-                    winner = -1
-                    break
-                numEmpty = np.subtract(numEmpty, 1)
+                state = newState
             else:
-                if not goingSecond:
-                    move = emptyIndices[0]
-                    state[move] = 1
-                    if self.checkWinSpecific(state, move):
-                        winner = 1
+                move = emptyIndices[0]
+                state[move] = 1
+                if self.checkWinSpecific(newState, move):
+                    state[move] = 0
+                    agent.won(state, move, 1)
+                    # agent.won(np.negative(state), move, -1)
+                else:
+                    agent.won(state, move, 0)
 
-            state[move] = 0
-            agent.won(state, move, winner)
+            # if goingSecond:
+            #     move = emptyIndices.pop(np.random.randint(numEmpty))
+            #     state[move] = -1
+            #     numEmpty = np.subtract(numEmpty, 1)
+
+            # for turn in xrange(4):
+            #     move = emptyIndices.pop(np.random.randint(numEmpty))
+            #     oldState = np.negative(state)
+            #     state[move] = 1
+            #     if self.checkWinSpecific(state, move):
+            #         winner = 1
+            #         break
+            #     agent.train(state, oldState, move, emptyIndices)
+            #     numEmpty = np.subtract(numEmpty, 1)
+            #     oldState[move] = 1
+
+            #     move = emptyIndices.pop(np.random.randint(numEmpty))
+            #     state[move] = -1
+            #     # oldState[move] = 1 train on opponent's rand move. Maybe even just run one move (not 2) until end
+            #     if self.checkWinSpecific(state, move):
+            #         winner = -1
+            #         break
+            #     numEmpty = np.subtract(numEmpty, 1)
+            # else:
+            #     if not goingSecond:
+            #         move = emptyIndices[0]
+            #         state[move] = 1
+            #         if self.checkWinSpecific(state, move):
+            #             winner = 1
+
+            # state[move] = 0
+            # agent.won(state, move, winner)
