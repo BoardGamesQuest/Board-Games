@@ -12,7 +12,6 @@ class Board:
 
         self.debugMode = debugMode
         self.rowIndices, self.allIndices = self.findRowIndices() # A list of all the rows, where each row is represented by a list of the positions of its elements
-        self.winners = [] # record of who won every game
         self.reset()
 
     def setAgents(self, agents):
@@ -82,6 +81,7 @@ class Board:
         self.display()
 
     def run(self):
+        self.reset()
         self.currentPlayer = 1
         for turn in range(self.size ** self.dimension):
             if self.debugMode: print "Player {}, make your move.".format(self.currentPlayer)
@@ -123,11 +123,110 @@ class Board:
         return 0
 
     def runGames(self, numGames=1, shuffle=True):
+        winners = []
         for i in xrange(numGames):
             if i % 100 == 99:
                 print "RUNNING GAME: ", i+1
             if shuffle: random.shuffle(self.agents)
-            self.winners.append(self.run())
-            self.reset()
-        if self.debugMode: print self.winners
-        return self.winners
+            winners.append(self.run())
+        if self.debugMode: print winners
+        return winners
+
+    def interactiveTest(self, agent):
+        from Agents.humanAgent import Human
+        oldMode = copy.copy(self.debugMode)
+        self.debugMode = True
+        self.setAgents([Human(boardParams), agent])
+        self.runGames()
+        self.debugMode = oldMode
+
+    def test(self, agent, numGames, withRand=False, withLearn=False): #make efficient like train
+        from Agents.randomAgent import RandomChoose
+        if withLearn:
+            wasWin = copy.deepcopy(agent.withLearn)
+            agent.withLearn = False
+        if withRand:
+            wasRand = copy.deepcopy(agent.randomness)
+            agent.randomness = 0
+        agents = [agent, RandomChoose(boardParams)]
+        self.setAgents(agents)
+        firstWins = self.runGames(numGames=numGames, shuffle=False)
+        agents = [agents[1], agents[0]]
+        self.setAgents(agents)
+        secondWins = self.runGames(numGames=numGames, shuffle=False)
+        if withLearn:
+            agent.withLearn = wasWin
+        if withRand:
+            agent.randomness = wasRand
+        return [("wins", firstWins.count(1), secondWins.count(2)), ("losses", firstWins.count(2), secondWins.count(1)), ("ties", firstWins.count(0), secondWins.count(0))]
+
+    def checkWinSpecific(self, state, move):
+        if state[(move[0], 0)] == state[(move[0], 1)] == state[(move[0], 2)]:
+            return True
+        if state[(0, move[1])] == state[(1, move[1])] == state[(2, move[1])]:
+            return True
+        if move[0] == move[1]:
+            if state[(0, 0)] == state[(1, 1)] == state[(2, 2)]:
+                return True
+        if move[0] == 2 - move[1]:
+            if state[(0, 2)] == state[(1, 1)] == state[(2, 0)]:
+                return True
+        return False
+
+    def train(self, agent, numGames=1000):
+        for i in xrange(numGames):
+            if i % 1000 == 0:
+                print "RUNNING GAME: ", i
+
+            goingSecond = np.random.choice([True, False])
+            winner = 0
+            state = np.zeros([3,3], dtype=np.int)
+            emptyIndices = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1), (2,2)]
+            numEmpty = 9
+
+            # Make less random later. Weighted moves
+            # for turn in xrange(9):
+            #     move = emptyIndices.pop(np.random.randint(numEmpty))
+            #     numEmpty = np.subtract(numEmpty, 1)
+            #     newState = np.negative(state)
+            #     newState[move] = -1
+            #     agent.train(newState, state, move, emptyIndices)
+            #     if self.checkWinSpecific(newState, move):
+            #         agent.won(state, move, 1)
+            #         newState[move] = 0
+            #         agent.won(newState, move, -1)
+            #         break
+            #     state = newState
+
+            if goingSecond:
+                move = emptyIndices.pop(np.random.randint(numEmpty))
+                state[move] = -1
+                numEmpty = np.subtract(numEmpty, 1)
+
+            for turn in xrange(4):
+                move = emptyIndices.pop(np.random.randint(numEmpty))
+                oldState = np.negative(state)
+                state[move] = 1
+                if self.checkWinSpecific(state, move):
+                    winner = 1
+                    break
+                agent.train(state, oldState, move, emptyIndices)
+                numEmpty = np.subtract(numEmpty, 1)
+                oldState[move] = 1
+
+                move = emptyIndices.pop(np.random.randint(numEmpty))
+                state[move] = -1
+                # oldState[move] = 1 train on opponent's rand move. Maybe even just run one move (not 2) until end
+                if self.checkWinSpecific(state, move):
+                    winner = -1
+                    break
+                numEmpty = np.subtract(numEmpty, 1)
+            else:
+                if not goingSecond:
+                    move = emptyIndices[0]
+                    state[move] = 1
+                    if self.checkWinSpecific(state, move):
+                        winner = 1
+
+            state[move] = 0
+            agent.won(state, move, winner)

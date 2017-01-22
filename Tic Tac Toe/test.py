@@ -1,15 +1,17 @@
-from main import boardParams
-from qLearn import Q
+from board import Board, boardParams
+from newQ import Q
 
 # boardParams = {"numPlayers" : 2, "size" : 3, "dimension" : 2, "limit" : 10}
 
 
 
 # deterministic = Q(boardParams, randomness=0.001)
-normal = Q(boardParams)
-normal.efficientTrain(100000)
-print normal.test(500)
-normal.interactiveTest()
+board = Board(boardParams)
+alg = Q(boardParams)
+print board.test(alg, 500)
+board.train(alg, numGames=10000)
+print board.test(alg, 500)
+board.interactiveTest(alg)
 # rand = Q(boardParams, randomness=0.8)
 # agents = [deterministic, normal, rand]
 

@@ -1,8 +1,7 @@
 import numpy as np
-import re, random, copy
-from board import Board
-from Agents.compileAgents import Agent, Human, RandomChoose, Minimax, compileAgents
-
+from abc import ABCMeta, abstractmethod
+import re, random, main, copy
+from main import Agent, Board
 
 class Q(Agent):
     def __init__(self, boardParams, learningRate=0.3, discountRate=0.9, randomness=0.2, debugMode=False):
@@ -43,7 +42,7 @@ class Q(Agent):
         currentVal = self.Q.get((str(state), move), 0)
         self.Q[(str(state), move)] = currentVal + self.learningRate * (val - currentVal)
 
-    def action(self, board, state, turn, playerNum, possibleMoves):
+    def action(self, state, turn, playerNum, possibleMoves):
         state = self.boolState(state, playerNum)
         move = (0, 0)
         if random.random() < self.randomness:
@@ -74,7 +73,7 @@ class Q(Agent):
         # if self.debugMode: print self.Q.values()
 
     def train(self, iterations, withRand=True):
-        agents = [self, RandomChoose(self.boardParams)]
+        agents = [self, main.RandomChoose(self.boardParams)]
         train = Board(self.boardParams)
         train.setAgents(agents)
         trainWins = train.runGames(numGames=iterations)
@@ -87,24 +86,21 @@ class Q(Agent):
         if withRand:
             wasRand = copy.deepcopy(self.randomness)
             self.randomness = 0
-        agents = [self, RandomChoose(self.boardParams)]
+        agents = [self, main.RandomChoose(self.boardParams)]
         test = Board(self.boardParams)
         test.setAgents(agents)
         firstWins = test.runGames(numGames=numGames, shuffle=False)
-        # agents = [agents[1], agents[0]]
-        # test.setAgents(agents)
-        # secondWins = test.runGames(numGames=numGames, shuffle=False)
+        agents = [agents[1], agents[0]]
+        test.setAgents(agents)
+        secondWins = test.runGames(numGames=numGames, shuffle=False)
         if withLearn:
             self.withLearn = wasWin
         if withRand:
             self.randomness = wasRand
-        print len(firstWins)
-        return firstWins.count(1), firstWins.count(0)
-
-        # return firstWins.count(1) + secondWins.count(2), firstWins.count(0) + second.count(0)
+        return firstWins.count(1) + secondWins.count(2), firstWins.count(0) + firstWins.count(0)
 
     def interactiveTest(self):
-        agents = [Human(self.boardParams), self]
+        agents = [main.Human(self.boardParams), self]
         test = Board(self.boardParams, debugMode=True)
         test.setAgents(agents)
         test.runGames()
