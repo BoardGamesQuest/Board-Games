@@ -15,6 +15,11 @@ class Player:
             self.hand.append(random.choice([Card('nigiri'),Card('Sashimi'),Card('Dumpling'),Card('Wasabi'),Card('Maki'),Card('Tempura'),Card('Pudding')]))#may want to change if we want to incorporate the number of times a card appears in the deck
         for i in range(len(self.hand)):
             print self.hand[i].cardType
+
+    def selectCards():
+        # temporary
+        move = Card("Squid Nigiri")
+        # should make something that iterates through hand, and if card is not found ask for a different card
 class Card:
     def __init__(self, cardType):
         self.cardType = cardType
