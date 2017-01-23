@@ -18,5 +18,5 @@ class Player:
 class Card:
     def __init__(self, cardType):
         self.cardType = cardType
-//me = Player(1,1)
-//me.generateHand()
+# me = Player(1,1)
+# me.generateHand()
