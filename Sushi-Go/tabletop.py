@@ -2,14 +2,19 @@ import copy
 import random
 import numpy as np
 
+
 class SushiGo:
     def __init__(self, params, debugMode=False):
         if type(params) == list:
             self.numPlayers = params[0]
+        if type(params) == list and len(params) > 1:
+            self.maxRounds = params[1] #default should be 3
         self.debugMode = debugMode
         self.players = []
         # for i in range(self.numPlayers):
-            # self.players.append(Player(i, self.numPlayers))
+        #     self.players.append(Player(i, self.numPlayers))
+        self.numRound = 0
+
 
     # def reset():
     #     for player in players:
@@ -17,7 +22,7 @@ class SushiGo:
     #         # someone write generateHand plz
     #         player.board = []
 
-    def display():
+    def display(self):
         for player in self.players:
             print "This is player {}'s hand:".format(player.playerNum), player.hand
             print "This is player {}'s board:".format(player.playerNum), player.board
@@ -45,20 +50,34 @@ class SushiGo:
             print "HAND", hand
             # player.hand = hand
 
-    def selectCards():
+    def selectCards(self):
         # temporary
         move = Card("Squid Nigiri")
 
-    def processMoves(player, move):
+    def processMoves(self, player, move):
         player.hand.remove(move)
         player.board.append(move)
 
-    def passHands():
+    def passHands(self):
         # this might be pretty inefficient, optimize plz
         tempPlayers = copy.deepcopy(self.players)
         for player in self.players:
             player.hand = tempPlayers[(player.playerNum+1)%numPlayers]
 
+    def runGame(self):
+        for player in self.players:
+            player.generateHand()
+        self.display()
+#        while True: #hopefully theres a better way to repeatedly check
+        for player in self.players:
+            self.processMoves(player, player.selectCards())
+        if len(self.players[len(self.players)-1].hand) == 0:
+            for player in self.players:
+                player.scoreBoard()
+                self.numRound += 1
+                player.generateHand()
+        else:
+            self.passHands()
 
 
 
@@ -103,17 +122,19 @@ board.generateDeck()
 board.shuffleDeck()
 board.dealHands(4,10)
 
-# class Player:
-    # def __init__(self, playerNum, numPlayers):
-    #     self.playerNum = playerNum
-    #     self.hand = self.generateHand(numPlayers)
-    #     self.board = []
-    #     self.score = 0
+class Player:
+    def __init__(self, playerNum, numPlayers):
+        self.playerNum = playerNum
+        # self.hand = self.generateHand(numPlayers)
+        self.board = []
+        self.score = 0
     # def scoreBoard():
     #     for i in self.board:
-    #         if self.board[i].cardType == Nigiri
+    #         if self.board[i].cardType == Nigiri:
     #             self.score += self.board[i].pointvalue
 
     # def generateHand():
     #     if len(self.hand < #formula for cards in hand gien numPlayers)
-    #         self.hand.append(random.choice([Card('nigiri'),Card('Sashimi')]))#may want to change if we want to incorporate the number of times a card appears in the deck
+            # self.hand.append(random.choice([Card('nigiri'),Card('Sashimi')]))#may want to change if we want to incorporate the number of times a card appears in the deck
+
+    
