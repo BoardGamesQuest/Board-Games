@@ -28,7 +28,7 @@ class SushiGo:
             print "This is player {}'s board:".format(player.playerNum), player.board
 
     def generateDeck(self):
-        distribution = {Sashimi: [10,10,10],
+        distribution = {Nigiri: [10,10,10],
                         Wasabi: 10}
         self.deck = np.array([])
         for cardType in distribution:
@@ -113,7 +113,7 @@ class Card:
    #     self.name = str(name)
    #     self.pointvalue = pointvalue
 #
-class Sashimi(Card):
+class Nigiri(Card):
     def __init__(self, variation):
         self.score = variation
 #
