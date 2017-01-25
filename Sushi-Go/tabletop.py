@@ -28,14 +28,17 @@ class SushiGo:
             print "This is player {}'s board:".format(player.playerNum), player.board
 
     def generateDeck(self):
-        distribution = {Sashimi: [10,10,10], Wasabi: 10}
+        distribution = {Sashimi: [10,10,10],
+                        Wasabi: 10}
         self.deck = np.array([])
         for cardType in distribution:
             # print cardType
+            # TODO: check the fact that your dictionary datatypes are not all the same
+            # isinstance(distribution[cardType], list)
             if type(distribution[cardType]) == list:
                 for variation in range(len(distribution[cardType])):
                     # print np.repeat(cardType(variation), distribution[cardType][variation])
-                    self.deck = np.append(self.deck, np.repeat(cardType(variation), distribution[cardType][variation]))
+                    self.deck = np.append(self.deck, np.repeat(cardType(variation+1), distribution[cardType][variation]))
             else:
                 self.deck = np.append(self.deck, np.repeat(cardType(), distribution[cardType]))
         print self.deck
@@ -145,5 +148,3 @@ class Player:
     # def generateHand():
     #     if len(self.hand < (12 - numPlayers))
             # self.hand.append(random.choice([Card('nigiri'),Card('Sashimi')]))#may want to change if we want to incorporate the number of times a card appears in the deck
-
-    
