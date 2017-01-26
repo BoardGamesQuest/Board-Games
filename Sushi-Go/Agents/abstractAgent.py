@@ -20,6 +20,8 @@ class Player:
         # temporary
         move = Card("Squid Nigiri")
         # should make something that iterates through hand, and if card is not found ask for a different card
+
+        
 class Card:
     def __init__(self, cardType):
         self.cardType = cardType

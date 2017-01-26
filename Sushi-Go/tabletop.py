@@ -46,7 +46,7 @@ class SushiGo:
     def dealHands(self, numplayers, numCards):
         for i in range(numplayers):
             hand = self.deck[:numCards]
-            self.deck = self.deck[numCards+1:]
+            self.deck = self.deck[numCards:]
             print "HAND", hand
             # player.hand = hand
 
