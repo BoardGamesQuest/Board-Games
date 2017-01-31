@@ -141,7 +141,7 @@ class SushiGoBoard:
                 if type(card) == Cards.Tempura:
                     boardScore[-1] += 1
             boardScores[-1] =  np.floor(boardScores[-1]/2) * 5
-
+# use IsInstance function
         return boardScores
 
     def scoreMaki(self, boards): # is there anything more eficient?
