@@ -1,3 +1,3 @@
-from SushiGo import SushiGo
+from SushiGo import SushiGoBoard
 
-game = SushiGo([4,3])
+game = SushiGoBoard([4,3])

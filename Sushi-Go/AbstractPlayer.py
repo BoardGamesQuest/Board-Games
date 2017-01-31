@@ -1,7 +1,7 @@
 import random
 from abc import ABCMeta, abstractmethod
 
-class AbstractPlayer:
+class Abstract:
     __metaclass__ = ABCMeta
     def __init__(self, playerNum, numPlayers):
         self.playerNum = playerNum
@@ -9,7 +9,7 @@ class AbstractPlayer:
         self.score = 0
         self.board = []
 
-        
+
 #    def scoreBoard(self):
 #        for i in self.board:
 #            if self.board[i].cardType == 'Nigiri':
@@ -31,6 +31,6 @@ class AbstractPlayer:
     def move(self):
         raise NotImplementedError('Each player must have a move() function')
         # each player/algorithm should overide this method to return the card of choice
-        
+
 # me = Player(1,1)
 # me.generateHand()

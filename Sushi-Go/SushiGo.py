@@ -4,10 +4,10 @@ import numpy as np
 import Deck
 import Cards
 #import the players/algorithms here
-from SamplePlayer import SamplePlayer
+from SamplePlayer import Sample
 
 
-class SushiGo:
+class SushiGoBoard:
     def __init__(self, params, debugMode=False):
         if type(params) == list:
             self.numPlayers = params[0]
@@ -18,7 +18,7 @@ class SushiGo:
         self.debugMode = debugMode
         self.players = []
         for i in range(self.numPlayers):
-            self.players.append(SamplePlayer(i, self.numPlayers))
+            self.players.append(Sample(i, self.numPlayers))
         self.numRound = 0
 
 
