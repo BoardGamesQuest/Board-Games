@@ -1,3 +1,3 @@
-from tabletop import SushiGo
+from SushiGo import SushiGo
 
-game = new SushiGo([4,3])
+game = SushiGo([4,3])

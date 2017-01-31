@@ -1,11 +1,14 @@
 import random
+from abc import ABCMeta, abstractmethod
 
 class AbstractPlayer:
+    __metaclass__ = ABCMeta
     def __init__(self, playerNum, numPlayers):
         self.playerNum = playerNum
         self.hand = []
-        self.board = []
         self.score = 0
+        self.board = []
+
         
 #    def scoreBoard(self):
 #        for i in self.board:
