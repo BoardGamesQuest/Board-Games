@@ -4,7 +4,7 @@ import numpy as np
 import Deck
 import Cards
 #import the players/algorithms here
-import SamplePlayer
+from SamplePlayer import SamplePlayer
 
 
 class SushiGo:
@@ -193,9 +193,9 @@ class SushiGo:
                 boardScores[i] = 0
 
         return boardScores
-            
-        
-        
+
+
+
     def score(self, lastround):
         boards = []
         for player in self.players:
@@ -216,7 +216,7 @@ class SushiGo:
                 finalScore[-1] += score[i]
 
         return finalScore
-        
+
 
     def cycle(self): # think of a better name, but round is already defined in python
         self.dealHands()
@@ -239,7 +239,7 @@ class SushiGo:
             for player in self.players:
                 player.takeHand(hands[0])
                 hands = hands[1:]
-        
+
 
     def run(self):
         for i in range(self.maxRounds):

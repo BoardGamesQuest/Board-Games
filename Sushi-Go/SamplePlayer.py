@@ -1,4 +1,4 @@
-import AbstractPlayer
+from AbstractPlayer import AbstractPlayer
 
 class SamplePlayer(AbstractPlayer):
     def __init__(self, playerNum, numPlayers):
@@ -7,4 +7,4 @@ class SamplePlayer(AbstractPlayer):
     def move(self):
         card = self.hand.pop(0)
         self.board.append(card) #adds the card to the board
-        return card # returns card if the game needs it 
+        return card # returns card if the game needs it
