@@ -1,8 +1,8 @@
 import copy
 import random
 import numpy as np
-import Deck
-import Cards
+from Deck import *
+from Cards import *
 #import the players/algorithms here
 from SamplePlayer import Sample
 
