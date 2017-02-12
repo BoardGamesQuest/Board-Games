@@ -34,28 +34,27 @@ class Deck:
                     self.cards.append(Cards.Pudding())
 
         return self.cards
-                
+
 
     def shuffle(self):
         random.shuffle(self.cards)
 
     def getCard(self):
-        return self.cards[random.randint(0, len(self.cards))]#returns a random card
+        return self.cards[random.randint(0, len(self.cards)-1)]#returns a random card
 
     def getHand(self, size):
         hand = []
-        for i in size:
+        for i in range(size):
             card = self.getCard()
             hand.append(card)
             self.removeCard(card)
         return hand
 
     def removeCard(self, card):
-        self.card.remove(card) # removes the first instance of the given card from the deck
+        self.cards.remove(card) # removes the first instance of the given card from the deck
 
     def addCard(self, card):
         self.cards.insert(random.randint(0, len(self.cards)), card) # adds a card to a random spot in the deck
 
     def getDeck(self):
         return self.cards
-

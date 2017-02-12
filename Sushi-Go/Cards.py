@@ -1,6 +1,6 @@
 import numpy as np
 
-class AbstractCard:
+class AbstractCard(object):
     def __init__ (self, cardType):
         self.cardType = cardType
 
@@ -9,23 +9,23 @@ class AbstractCard:
 
 class Nigiri(AbstractCard):
     def __init__(self, pointValue):
-        super(self, ('Nigiri '+ str(pointValue))).__init__()
+        super(Nigiri, self).__init__(('Nigiri '+ str(pointValue)))
         self.pointValue = pointValue
 
 #    def score(self, amount): #if each card has a score function we will only have to call this on one card it might be better to create a score fnction that calculates score in the SushiGo class
 #        return amount * self.pointValue
-        
+
 
 class Sashimi(AbstractCard):
     def __init__(self):
-        super(self, 'Sashimi').__init__()
+        super(Sashimi, self).__init__('Sashimi')
 
 #    def score(self, amount):
 #        return np.floor(amount/3) * 3
 
 class Dumpling(AbstractCard):
     def __init__(self):
-        super(self, 'Dumpling').__init__()
+        super(Dumpling, self).__init__('Dumpling')
 
 #    def score(self, amount):
 #        score = 0
@@ -38,9 +38,9 @@ class Dumpling(AbstractCard):
 
 class Wasabi(AbstractCard):
     def __init__(self):
-        super(self, 'Wasabi').__init__()
+        super(Wasabi, self).__init__('Wasabi')
         self.nigiri = False
-        self.nigiriCard
+
 
     def addNigiri(self, nigiri):
         self.nigiri = True
@@ -54,14 +54,14 @@ class Wasabi(AbstractCard):
 
 class Tempura(AbstractCard):
     def __init__(self):
-        super(self, 'Tempura').__inti__()
+        super(Tempura, self).__inti__('Tempura')
 
 #    def score(self, amount):
 #        return np.floor(amount/2) * 2
 
 class Maki(AbstractCard): # I do not like that the formating of ths and the nigiri card is different from the rest. this one is also harder to score, any Ideas?
     def __init__(self, size):
-        super(self, ('Maki' + str(size))).__init__()
+        super(Maki, self).__init__(('Maki' + str(size)))
         self.size = size
 
 #    def getSize(self):
@@ -83,11 +83,11 @@ class Maki(AbstractCard): # I do not like that the formating of ths and the nigi
 #            return np.floor(3/(ties+1))
 #        else:
 #            return 0
-            
+
 
 class Pudding(AbstractCard):
     def __init__(self):
-        super(self, 'Pudding').__init__()
+        super(Pudding, self).__init__('Pudding')
 
 #    def score(self, amount, amounts):
 #        sortamounts = sorted(amounts)
@@ -98,5 +98,3 @@ class Pudding(AbstractCard):
 #            return np.floor(-6/(ties+1))
 #        else:
 #            return 0
-
-        

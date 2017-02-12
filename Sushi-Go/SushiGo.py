@@ -35,7 +35,7 @@ class SushiGoBoard:
 
     def generateDeck(self):
         distribution = {'Nigiri': 30, 'Wasabi': 10}# someone needs to find the actuall distribution for cards
-        self.deck = Deck.Deck()
+        self.deck = Deck()
         self.deck.generate(distribution)
         self.deck.shuffle()
         print (self.deck.cards)
@@ -219,6 +219,7 @@ class SushiGoBoard:
 
 
     def cycle(self): # think of a better name, but round is already defined in python
+        self.generateDeck()
         self.dealHands()
         hands = []
         emptyHands = 0
