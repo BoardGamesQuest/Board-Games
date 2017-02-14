@@ -54,7 +54,7 @@ class Wasabi(AbstractCard):
 
 class Tempura(AbstractCard):
     def __init__(self):
-        super(Tempura, self).__inti__('Tempura')
+        super(Tempura, self).__init__('Tempura')
 
 #    def score(self, amount):
 #        return np.floor(amount/2) * 2

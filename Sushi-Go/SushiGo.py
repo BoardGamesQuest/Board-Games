@@ -34,7 +34,7 @@ class SushiGoBoard:
             print "This is player {}'s board:".format(player.playerNum), player.board
 
     def generateDeck(self):
-        distribution = {'Nigiri': 300, 'Wasabi': 10}# someone needs to find the actuall distribution for cards
+        distribution = {'Nigiri': 30, 'Wasabi': 10, 'Maki': 30, 'Dumpling': 30, 'Tempura': 30, 'Sashimi': 30, 'Pudding': 30}# someone needs to find the actuall distribution for cards
         self.deck = Deck()
         self.deck.generate(distribution)
         self.deck.shuffle()
@@ -100,7 +100,7 @@ class SushiGoBoard:
             boardScores.append(0)
             for card in board:
                 if type(card) == Cards.Sashimi:
-                    boardScore[-1] += 1
+                    boardScores[-1] += 1
             boardScores[-1] =  np.floor(boardScores[-1]/3) * 10
 
         return boardScores
@@ -139,7 +139,7 @@ class SushiGoBoard:
             boardScores.append(0)
             for card in board:
                 if type(card) == Cards.Tempura:
-                    boardScore[-1] += 1
+                    boardScores[-1] += 1
             boardScores[-1] =  np.floor(boardScores[-1]/2) * 5
 # use IsInstance function
         return boardScores
@@ -150,7 +150,7 @@ class SushiGoBoard:
             boardScores.append(0)
             for card in board:
                 if type(card) == Cards.Maki:
-                    boardScore[-1] += card.size
+                    boardScores[-1] += card.size
         sortScores = sorted(boardScores)
         firsts = []
         seconds = []
@@ -162,7 +162,7 @@ class SushiGoBoard:
         for i in range(len(boardScores)):
             if i in firsts:
                 boardScores[i] = np.floor(6/(len(firsts)))
-            elif i in second:
+            elif i in seconds:
                 boardScores[i] = np.floor(3/(len(seconds)))
             else:
                 boardScores[i] = 0
@@ -175,20 +175,20 @@ class SushiGoBoard:
             boardScores.append(0)
             for card in board:
                 if type(card) == Cards.Pudding:
-                    boardScore[-1] += 1
+                    boardScores[-1] += 1
         sortScores = sorted(boardScores)
         firsts = []
         lasts = []
         for i in range(len(boardScores)):
             if boardScores[i] == sortScores[-1]:
                 firsts.append(i)
-            elif boardScores[i] == sortedScores[1]:
+            elif boardScores[i] == sortScores[1]:
                 lasts.append(i)
         for i in range(len(boardScores)):
             if i in firsts:
                 boardScores[i] = np.floor(6/(len(firsts)))
             elif i in lasts:
-                boardScores[i] = np.floor(-6/(len(seconds)))
+                boardScores[i] = np.floor(-6/(len(lasts)))
             else:
                 boardScores[i] = 0
 
