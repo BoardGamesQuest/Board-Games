@@ -34,7 +34,7 @@ class SushiGoBoard:
             print "This is player {}'s board:".format(player.playerNum), player.board
 
     def generateDeck(self):
-        distribution = {'Nigiri': 30, 'Wasabi': 10}# someone needs to find the actuall distribution for cards
+        distribution = {'Nigiri': 300, 'Wasabi': 10}# someone needs to find the actuall distribution for cards
         self.deck = Deck()
         self.deck.generate(distribution)
         self.deck.shuffle()
@@ -219,7 +219,6 @@ class SushiGoBoard:
 
 
     def cycle(self): # think of a better name, but round is already defined in python
-        self.generateDeck()
         self.dealHands()
         hands = []
         emptyHands = 0
@@ -243,6 +242,7 @@ class SushiGoBoard:
 
 
     def run(self):
+        self.generateDeck()
         for i in range(self.maxRounds):
             self.cycle()
             if i != (self.maxRounds - 1):
