@@ -105,7 +105,7 @@ class SushiGoBoard:
 
         return boardScores
 
-    def scoreDumplings(self, boards):
+    def scoreDumpling(self, boards):
         boardScores = []
         for board in boards:
             boardScores.append(0)
@@ -113,8 +113,8 @@ class SushiGoBoard:
                 if type(card) == Cards.Dumpling:
                     boardScores[-1] += 1
             score = 0
-            if (amount < 5):
-                for i in range(boardScore[-1]): # there might be something more efficient
+            if (boardScores[-1] < 5):
+                for i in range(boardScores[-1]): # there might be something more efficient
                     score += i
                 boardScores[-1] = score
             else:
@@ -155,9 +155,9 @@ class SushiGoBoard:
         firsts = []
         seconds = []
         for i in range(len(boardScores)):
-            if boardScore[i] == sortScores[-1]:
+            if boardScores[i] == sortScores[-1]:
                 firsts.append(i)
-            elif boardScore[i] == sortScores[- (1+sortScores.count(sortScores[-1]))]:
+            elif boardScores[i] == sortScores[- (1+sortScores.count(sortScores[-1]))]:
                 seconds.append(i)
         for i in range(len(boardScores)):
             if i in firsts:
@@ -180,9 +180,9 @@ class SushiGoBoard:
         firsts = []
         lasts = []
         for i in range(len(boardScores)):
-            if boardScore[i] == sortScores[-1]:
+            if boardScores[i] == sortScores[-1]:
                 firsts.append(i)
-            elif boardScore[i] == sortedScores[1]:
+            elif boardScores[i] == sortedScores[1]:
                 lasts.append(i)
         for i in range(len(boardScores)):
             if i in firsts:
@@ -208,7 +208,7 @@ class SushiGoBoard:
         scores.append(self.scoreTempura(boards))
         scores.append(self.scoreMaki(boards))
         if lastround:
-            scores.append(self.puddingNigiri(boards))
+            scores.append(self.scorePudding(boards))
         finalScore = []
         for i in range(len(scores[0])):
             finalScore.append(0)
