@@ -6,7 +6,6 @@ class Sample2(Abstract):
 
     def move(self):
         card = self.hand.pop(0)
-        print('move')
         if card.cardType == 'Nigiri 1' or card.cardType == 'Nigiri 2' or card.cardType == 'Nigiri 3':
             for card2 in self.board:
                 if card2.cardType == 'Wasabi':

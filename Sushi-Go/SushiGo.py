@@ -19,7 +19,7 @@ class SushiGoBoard:
         self.debugMode = debugMode
         self.players = []
         for i in range(self.numPlayers):
-            if i == 1:
+            if i == 0:
                 self.players.append(Sample2(i, self.numPlayers))
             else:
                 self.players.append(Sample(i, self.numPlayers))
