@@ -5,6 +5,7 @@ from Deck import *
 from Cards import *
 #import the players/algorithms here
 from SamplePlayer import Sample
+from SamplePlayer2 import Sample2
 
 
 class SushiGoBoard:
@@ -18,7 +19,10 @@ class SushiGoBoard:
         self.debugMode = debugMode
         self.players = []
         for i in range(self.numPlayers):
-            self.players.append(Sample(i, self.numPlayers))
+            if i == 1:
+                self.players.append(Sample2(i, self.numPlayers))
+            else:
+                self.players.append(Sample(i, self.numPlayers))
         self.numRound = 0
 
 
@@ -129,7 +133,7 @@ class SushiGoBoard:
             for card in board:
                 if type(card) == Cards.Wasabi:
                     if card.nigiri:
-                        boardScores[-1] += (2*card.nigiriCard.pointvalue) # only * 2 becuase we already evaluate the point value once when scoring nigiri
+                        boardScores[-1] += (2*card.nigiriCard.pointValue) # only * 2 becuase we already evaluate the point value once when scoring nigiri
 
         return boardScores
 
