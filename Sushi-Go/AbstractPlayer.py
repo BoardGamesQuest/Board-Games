@@ -8,6 +8,7 @@ class Abstract:
         self.hand = []
         self.score = 0
         self.board = []
+        self.round = 1
 
 
 #    def scoreBoard(self):
@@ -32,5 +33,10 @@ class Abstract:
         raise NotImplementedError('Each player must have a move() function')
         # each player/algorithm should overide this method to return the card of choice
 
+    def cleanup(self):
+        pass
+
+    def setup(self):
+        pass
 # me = Player(1,1)
 # me.generateHand()

@@ -221,7 +221,16 @@ class SushiGoBoard:
 
         return finalScore
 
+    def setup(self):
+        for player in self.players:
+            player.setup()
+        #put any other code here to setup the cycle
 
+    def cleanup(self):
+        for player in self.players:
+            player.cleanup()
+
+        
     def cycle(self): # think of a better name, but round is already defined in python
         self.dealHands()
         hands = []
@@ -248,6 +257,7 @@ class SushiGoBoard:
     def run(self):
         self.generateDeck()
         for i in range(self.maxRounds):
+            self.setup()
             self.cycle()
             if i != (self.maxRounds - 1):
                 scores = self.score(False)
@@ -256,6 +266,8 @@ class SushiGoBoard:
             print (scores)
             for i in range(len(scores)):
                 self.players[i].score += scores[i]
+                self.players[i].round += 1
+            self.cleanup()
 
 
 
