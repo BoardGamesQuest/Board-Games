@@ -8,7 +8,7 @@ class Abstract:
         self.hand = []
         self.score = 0
         self.board = []
-        self.round = 1
+        self.round = 0
 
 
 #    def scoreBoard(self):
