@@ -43,7 +43,7 @@ class SushiGoBoard:
         self.deck = Deck()
         self.deck.generate(distribution)
         self.deck.shuffle()
-        print (self.deck.cards)
+        #print (self.deck.cards)
  #       self.deck = np.array([])
 #        for cardType in distribution:
 #            # print cardType
@@ -225,6 +225,7 @@ class SushiGoBoard:
     def setup(self):
         for player in self.players:
             player.setup()
+            player.round += 1
         #put any other code here to setup the cycle
 
     def cleanup(self):
@@ -237,17 +238,20 @@ class SushiGoBoard:
         hands = []
         emptyHands = 0
         while True:
-            for player in self.players:
-                move = player.move()
-                print (move)
+            print("Next Turn.")
+            for i in range(len(self.players)):
+                move = self.players[i].move()
+                print("Player " + str(i+1) + " played a " + move.cardType + ".")
+                #print (move)
             for player in self.players:
                 hands.append(player.giveHand())
             for hand in hands:
                 if len(hand) == 0:
                     emptyHands += 1
             if emptyHands == len(hands):
-                print('round over')
+                #print('round over')
                 break
+            print("Passing Hands.")
             hands.append(hands[0])
             hands = hands[1:]
             for player in self.players:
@@ -258,17 +262,21 @@ class SushiGoBoard:
     def run(self):
         self.generateDeck()
         for i in range(self.maxRounds):
+            print("Round " + str(i+1) + ", Start.")
             self.setup()
             self.cycle()
             if i != (self.maxRounds - 1):
                 scores = self.score(False)
             else:
                 scores = self.score(True)
-            print (scores)
-            for i in range(len(scores)):
-                self.players[i].score += scores[i]
-                self.players[i].round += 1
+            #print (scores)
+            for k in range(len(scores)):
+                self.players[k].score += scores[k]
             self.cleanup()
+            print("Round " + str(i+1) + ", Stop.")
+            print("Score Board:")
+            for k in range(len(self.players)):
+                print("    Player " + str(k+1) + " Scored " + str(scores[k]) + " Points this round, for a total of " +str(self.players[k].score) + " Points.")
 
 
 

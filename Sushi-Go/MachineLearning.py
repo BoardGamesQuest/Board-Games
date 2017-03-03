@@ -8,15 +8,65 @@ class Learner(Abstract):
         self.currentRound = self.round
         
     def move(self):
+        #print(self.hand)
         self.pastMatchData = shelve.open('PastMatchData') #this algorithm will try to match the Ideal composition of cards based on passed match data.
         # it will take the percantage of each type of card of every game and scale it by the end score, and then take the average? and make that a set point it is trying to reach throught the game
         # it should do this individually or each round and then scale the percentatege of the board at the round end by the total score bc of pudding and stuff.
-        # step 1: storring data from previous rounds
-            # SubStep 1: dettecting a new round
-        card = self.hand.pop(0)
-        self.board.append(card)
+        target = self.calculateTarget(self.round)
+        cardsByType = {}
+        total = 0.0
+        for card in self.board:
+            if not(cardsByType.has_key(card.cardType)):
+                cardsByType[card.cardType] = 0.0
+            cardsByType[card.cardType] += 1
+            total += 1
+        boardPercentage = {}
+        for key in cardsByType.keys():
+            boardPercentage[key] = round((cardsByType[key] * 100)/total, 2)
+        diff = {}
+        for key in target.keys():
+            if boardPercentage.has_key(key):
+                diff[key] = round(target[key] - boardPercentage[key], 2)
+            else:
+                diff[key] = round(target[key], 2) # this rounding behaves weirdly as well as in other places
+        priorityList = []
+        for key in diff.keys(): # needs debugging
+            if len(priorityList) > 0:
+                if diff[key] < diff[priorityList[-1]]:
+                    priorityList.append(key)
+                    #print("not in list, appending " + key)
+                else:
+                    for i in range(len(priorityList)):
+                        if diff[key] > diff[priorityList[i]]:
+                            priorityList.insert(i, key)
+                            #print(key + " is bigger than " + priorityList[i + 1] + ", inserting at " + str(i))
+                            break
+                        else:
+                            pass
+            else:
+                priorityList.append(key)
+                #print("no list, appending " + key)
+        cardFinal = 0
+        tempList = priorityList
+        for priority in priorityList:
+            for card in self.hand:
+                if card.cardType == priority:
+                    cardFinal = card
+            if not(cardFinal == 0):
+                #print("hand: " + str(self.hand))
+                #print("removing card: " + str(cardFinal))
+                self.hand.remove(cardFinal)
+                break
+            
+            
+        #print(target)
+        #print(boardPercentage)
+        #print(diff)
+        #print(priorityList)
+        
+        self.board.append(cardFinal)
         self.pastMatchData.close()
-        return card
+        return cardFinal
 
     def setup(self):
         self.pastMatchData = shelve.open('PastMatchData')
@@ -51,7 +101,7 @@ class Learner(Abstract):
         localPastMatchData['Percentages'] = tempDict
         localPastMatchData['lengthOfBoard'] = total
         self.pastMatchData[roundName] = localPastMatchData
-        print(roundName + " " + str(self.pastMatchData[roundName]))
+        #print(roundName + " " + str(self.pastMatchData[roundName]))
 
             
         self.pastMatchData.close()
@@ -86,9 +136,9 @@ class Learner(Abstract):
                 if self.pastMatchData[key]["Score"] >= averageScore:
                     for cardPercentageKey in self.pastMatchData[key]['Percentages']:
                         if not(target.has_key(cardPercentageKey)):
-                            target[cardPercentageKey] = self.pastMatchData[key]['Percentages'][cardPercentageKey]*(self.pastMatchData[key]["Score"]/topScoresTotal)
+                            target[cardPercentageKey] = round(self.pastMatchData[key]['Percentages'][cardPercentageKey]*(self.pastMatchData[key]["Score"]/topScoresTotal), 2)
                         else:
-                            target[cardPercentageKey] += self.pastMatchData[key]['Percentages'][cardPercentageKey]*(self.pastMatchData[key]["Score"]/topScoresTotal)
+                            target[cardPercentageKey] += round(self.pastMatchData[key]['Percentages'][cardPercentageKey]*(self.pastMatchData[key]["Score"]/topScoresTotal), 2)
         self.pastMatchData.close()
         return target # It Works!!! (Very inifeciently though. To many for loops)
 
