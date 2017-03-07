@@ -1,8 +1,10 @@
 from AbstractPlayer import Abstract
+import shelve
 
 class Sample(Abstract):
     def __init__(self, playerNum, numPlayers):
         super(Sample, self).__init__(playerNum, numPlayers)
+        self.pastScore = 0
 
     def move(self):
         card = self.hand.pop(0)

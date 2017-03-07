@@ -1,10 +1,10 @@
 from AbstractPlayer import Abstract
 import shelve
 
-class Learner(Abstract):
+class Learner2(Abstract):
 
     def __init__(self, playerNum, numPlayers, collectingData = False):
-        super(Learner, self).__init__(playerNum, numPlayers)
+        super(Learner2, self).__init__(playerNum, numPlayers)
         self.currentRound = self.round
         self.pastScore = 0
         self.collectingData = collectingData
@@ -63,13 +63,24 @@ class Learner(Abstract):
                 #print("removing card: " + str(cardFinal))
                 self.hand.remove(cardFinal)
                 break
+        if cardFinal == 0:
+            cardFinal = self.hand[0]
+            self.hand.remove(cardFinal)
             
             
         #print(target)
         #print(boardPercentage)
         #print(diff)
         #print(priorityList)
-        
+        if cardFinal.cardType[:-2] == 'Nigiri':
+            print("Nigiri")
+            for card in self.board:
+                if card.cardType == 'Wasabi':
+                    print('wasabi')
+                    if not card.nigiri:
+                        print('empty')
+                        card.addNigiri(cardFinal)
+                        break
         self.board.append(cardFinal)
         self.pastMatchData.close()
         return cardFinal
@@ -116,38 +127,30 @@ class Learner(Abstract):
     def calculateTarget(self, rnd):
         self.pastMatchData = shelve.open('PastMatchData')
         target = {}
-        totalScore = 0.0
-        totalRounds = 0.0
-        Scores = []
-        for key in self.pastMatchData.keys():
-            if key == 'TotalRounds':
-                pass
-            elif self.pastMatchData[key]["Round"] == rnd:
-                totalScore += self.pastMatchData[key]["Score"]
-                Scores.append(self.pastMatchData[key]["Score"])
-                totalRounds += 1
-        if totalRounds != 0:
-            averageScore = totalScore/totalRounds
-        topScores = []
+        top10 = []
         topScoresTotal = 0.0
-        for key in self.pastMatchData.keys():
-            if key == 'TotalRounds':
-                pass
-            elif self.pastMatchData[key]["Round"] == rnd:
-                if self.pastMatchData[key]["Score"] >= averageScore:
-                    topScoresTotal += self.pastMatchData[key]["Score"]
-                    topScores.append(self.pastMatchData[key]["Score"])
-        for key in self.pastMatchData.keys():
-            if key == 'TotalRounds':
-                pass
-            elif self.pastMatchData[key]["Round"]  == rnd:
-                if self.pastMatchData[key]["Score"] >= averageScore:
-                    for cardPercentageKey in self.pastMatchData[key]['Percentages']:
-                        if not(target.has_key(cardPercentageKey)):
-                            target[cardPercentageKey] = round(self.pastMatchData[key]['Percentages'][cardPercentageKey]*(self.pastMatchData[key]["Score"]/topScoresTotal), 2)
-                        else:
-                            target[cardPercentageKey] += round(self.pastMatchData[key]['Percentages'][cardPercentageKey]*(self.pastMatchData[key]["Score"]/topScoresTotal), 2)
+        for i in range(9):
+            best = 0
+            for key in self.pastMatchData.keys():
+                if key == 'TotalRounds':
+                    pass
+                elif best == 0:
+                    best = key
+                elif self.pastMatchData[key]["Round"]  == rnd:
+                    if (self.pastMatchData[key]["Score"] > self.pastMatchData[best]["Score"]) and not(key in top10):
+                        best = key
+            top10.append(best)
+        print (top10)
+        for key in top10:
+            topScoresTotal += self.pastMatchData[key]["Score"]
+        for key in top10:
+            for cardPercentageKey in self.pastMatchData[key]['Percentages']:
+                if not(target.has_key(cardPercentageKey)):
+                    target[cardPercentageKey] = round(self.pastMatchData[key]['Percentages'][cardPercentageKey]*(self.pastMatchData[key]["Score"]/topScoresTotal), 2)
+                else:
+                    target[cardPercentageKey] += round(self.pastMatchData[key]['Percentages'][cardPercentageKey]*(self.pastMatchData[key]["Score"]/topScoresTotal), 2)
         self.pastMatchData.close()
+        print(target)
         return target # It Works!!! (Very inifeciently though. To many for loops)
 
 

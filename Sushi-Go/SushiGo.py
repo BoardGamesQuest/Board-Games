@@ -6,7 +6,7 @@ from Cards import *
 #import the players/algorithms here
 from SamplePlayer import Sample
 from SamplePlayer2 import Sample2
-from MachineLearning import Learner
+from MachineLearning2 import Learner2
 
 
 class SushiGoBoard:
@@ -21,7 +21,7 @@ class SushiGoBoard:
         self.players = []
         for i in range(self.numPlayers):
             if i == 0:
-                self.players.append(Learner(i, self.numPlayers))
+                self.players.append(Learner2(i, self.numPlayers))
             else:
                 self.players.append(Sample(i, self.numPlayers))
         self.numRound = 0
