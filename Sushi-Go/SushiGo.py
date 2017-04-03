@@ -5,7 +5,7 @@ from Deck import *
 from Cards import *
 #import the players/algorithms here
 from SamplePlayer import Sample
-
+from human import Human
 
 class SushiGoBoard:
     def __init__(self, params, debugMode=False):
@@ -18,7 +18,7 @@ class SushiGoBoard:
         self.debugMode = debugMode
         self.players = []
         for i in range(self.numPlayers):
-            self.players.append(Sample(i, self.numPlayers))
+            self.players.append(Human(i, self.numPlayers))
         self.numRound = 0
 
 
