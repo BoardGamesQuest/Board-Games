@@ -9,6 +9,7 @@ class Abstract:
         self.score = 0
         self.board = []
         self.round = 0
+        self.place = 0
 
 
 #    def scoreBoard(self):

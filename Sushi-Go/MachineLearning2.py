@@ -73,12 +73,12 @@ class Learner2(Abstract):
         #print(diff)
         #print(priorityList)
         if cardFinal.cardType[:-2] == 'Nigiri':
-            print("Nigiri")
+            #print("Nigiri")
             for card in self.board:
                 if card.cardType == 'Wasabi':
-                    print('wasabi')
+                    #print('wasabi')
                     if not card.nigiri:
-                        print('empty')
+                        #print('empty')
                         card.addNigiri(cardFinal)
                         break
         self.board.append(cardFinal)
@@ -150,7 +150,7 @@ class Learner2(Abstract):
                 else:
                     target[cardPercentageKey] += round(self.pastMatchData[key]['Percentages'][cardPercentageKey]*(self.pastMatchData[key]["Score"]/topScoresTotal), 2)
         self.pastMatchData.close()
-        print(target)
+        #print(target)
         return target # It Works!!! (Very inifeciently though. To many for loops)
 
 

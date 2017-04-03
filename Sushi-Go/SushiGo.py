@@ -7,6 +7,7 @@ from Cards import *
 from SamplePlayer import Sample
 from SamplePlayer2 import Sample2
 from MachineLearning2 import Learner2
+from Human import Interactive
 
 
 class SushiGoBoard:
@@ -19,11 +20,12 @@ class SushiGoBoard:
             self.maxRounds = 3
         self.debugMode = debugMode
         self.players = []
-        for i in range(self.numPlayers):
+        for i in range(self.numPlayers - 1):
             if i == 0:
-                self.players.append(Learner2(i, self.numPlayers))
+                self.players.append(Interactive(i, self.numPlayers))
+                self.players.append(Learner2(i+1, self.numPlayers))
             else:
-                self.players.append(Sample(i, self.numPlayers))
+                self.players.append(Sample(i+1, self.numPlayers))
         self.numRound = 0
 
 
@@ -272,11 +274,16 @@ class SushiGoBoard:
             #print (scores)
             for k in range(len(scores)):
                 self.players[k].score += scores[k]
+            sortedPlayers = sorted(self.players, key=lambda player: player.score)
+            for k in range(len(sortedPlayers)):
+                sortedPlayers[k].place = self.numPlayers - k
+                #print(sortedPlayers[k].place)
             self.cleanup()
             print("Round " + str(i+1) + ", Stop.")
             print("Score Board:")
             for k in range(len(self.players)):
                 print("    Player " + str(k+1) + " Scored " + str(scores[k]) + " Points this round, for a total of " +str(self.players[k].score) + " Points.")
+            print("Player " + str(sortedPlayers[-1].playerNum + 1) + " is in the lead")
 
 
 
