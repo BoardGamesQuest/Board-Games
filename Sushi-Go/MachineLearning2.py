@@ -86,6 +86,7 @@ class Learner2(Abstract):
         return cardFinal
 
     def setup(self):
+        super(Learner2, self).setup()
         self.pastMatchData = shelve.open('PastMatchData')
         if not(self.pastMatchData.has_key('TotalRounds')): # this is there so that if the int with the key 'Games' was not created yet in the shelve, it then creates it, instead of trying to add to it which does not work with undefined ints. only needs to be run once ever.
             self.pastMatchData['TotalRounds'] = 1
@@ -94,6 +95,7 @@ class Learner2(Abstract):
         self.pastMatchData.close()
 
     def cleanup(self):
+        super(Learner2, self).cleanup()
         self.pastMatchData = shelve.open('PastMatchData')
         roundName = 'Round ' + str(self.round) + ' ' + str(self.pastMatchData['TotalRounds'])
         localPastMatchData = {}
@@ -129,7 +131,7 @@ class Learner2(Abstract):
         target = {}
         top10 = []
         topScoresTotal = 0.0
-        for i in range(9):
+        for i in range(10):
             best = 0
             for key in self.pastMatchData.keys():
                 if key == 'TotalRounds':
@@ -140,7 +142,7 @@ class Learner2(Abstract):
                     if (self.pastMatchData[key]["Score"] > self.pastMatchData[best]["Score"]) and not(key in top10):
                         best = key
             top10.append(best)
-        print (top10)
+        # print (top10)
         for key in top10:
             topScoresTotal += self.pastMatchData[key]["Score"]
         for key in top10:

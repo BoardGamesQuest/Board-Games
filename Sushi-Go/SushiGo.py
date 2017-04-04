@@ -284,12 +284,3 @@ class SushiGoBoard:
             for k in range(len(self.players)):
                 print("    Player " + str(k+1) + " Scored " + str(scores[k]) + " Points this round, for a total of " +str(self.players[k].score) + " Points.")
             print("Player " + str(sortedPlayers[-1].playerNum + 1) + " is in the lead")
-
-
-
-    # def runGame():
-    #     numRound = 0
-    #     for player in self.players:
-    #         player.generateHand()
-    #     self.display()
-    #     while player.

@@ -13,7 +13,12 @@ class Interactive(Abstract):
         for i in range(len(self.board)):
             print (str(i) + ": " + self.board[i].cardType)
         while True:
-            cardIndex = int(raw_input("Please Choose a card by submitting it's index "))
+            inp = raw_input("Please Choose a card by submitting it's index ")
+            try:
+                cardIndex = int(inp)
+            except:
+                print("You did not enter a valid index")
+                continue
             if cardIndex in range(len(self.hand)):
                 print("You Chose " + self.hand[cardIndex].cardType)
                 answer = str(raw_input("Please confirm your choice by entering y if you would like to choose again enter n "))
