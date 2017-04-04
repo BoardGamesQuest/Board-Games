@@ -9,7 +9,7 @@ class Learner2(Abstract):
         self.pastScore = 0
         self.collectingData = collectingData
         
-    def move(self):
+    def move(self, game):
         if self.collectingData:
             cardFinal = self.hand.pop(0)
             self.board.append(cardFinal)

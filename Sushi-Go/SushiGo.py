@@ -203,7 +203,7 @@ class SushiGoBoard:
 
 
 
-    def score(self, lastround):
+    def score(self, lastround=False):
         boards = []
         for player in self.players:
             boards.append(player.board)
@@ -223,6 +223,10 @@ class SushiGoBoard:
                 finalScore[-1] += score[i]
 
         return finalScore
+    
+    def scoreSingle(self, Board):
+        Score = self.scoreNigiri(Board)[0] + self.scoreSashimi(Board)[0] + self.scoreDumpling(Board)[0] + self.scoreWasabi(Board)[0] + self.scoreTempura(Board)[0]
+        return Score
 
     def setup(self):
         for player in self.players:
@@ -242,7 +246,7 @@ class SushiGoBoard:
         while True:
             print("Next Turn.")
             for i in range(len(self.players)):
-                move = self.players[i].move()
+                move = self.players[i].move(self)
                 print("Player " + str(i+1) + " played a " + move.cardType + ".")
                 #print (move)
             for player in self.players:
@@ -284,3 +288,12 @@ class SushiGoBoard:
             for k in range(len(self.players)):
                 print("    Player " + str(k+1) + " Scored " + str(scores[k]) + " Points this round, for a total of " +str(self.players[k].score) + " Points.")
             print("Player " + str(sortedPlayers[-1].playerNum + 1) + " is in the lead")
+
+
+
+    # def runGame():
+    #     numRound = 0
+    #     for player in self.players:
+    #         player.generateHand()
+    #     self.display()
+    #     while player.

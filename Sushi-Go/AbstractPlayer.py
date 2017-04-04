@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 
 class Abstract:
     __metaclass__ = ABCMeta
-    def __init__(self, playerNum, numPlayers):
+    def __init__(self, playerNum, numPlayers, otherPlayers):
         self.playerNum = playerNum
         self.round = 0
         self.setup()
@@ -14,7 +14,7 @@ class Abstract:
     def giveHand(self):
         return self.hand
 
-    def move(self):
+    def move(self, game):
         raise NotImplementedError('Each player must have a move() function')
         # each player/algorithm should overide this method to return the card of choice
 

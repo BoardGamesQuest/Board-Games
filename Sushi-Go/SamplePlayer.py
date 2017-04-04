@@ -6,7 +6,7 @@ class Sample(Abstract):
         super(Sample, self).__init__(playerNum, numPlayers)
         self.pastScore = 0
 
-    def move(self):
+    def move(self, game):
         card = self.hand.pop(0)
         self.board.append(card) #adds the card to the board
         return card # returns card if the game needs it
