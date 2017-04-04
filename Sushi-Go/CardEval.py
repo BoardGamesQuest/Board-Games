@@ -1,11 +1,11 @@
 from AbstractPlayer import Abstract
 import copy
 
-class CardEval(Abstract):
+class CardEvaluator(Abstract):
     def __init__(self, playerNum, numPlayers):
-        super(CardEval, self).__init__(playerNum, numPlayers)
+        super(CardEvaluator, self).__init__(playerNum, numPlayers)
         self.pastScore = 0
-        for i in range(numPlayer):
+        
 
     def move(self, game):
         temp = (self.hand[0], 0)

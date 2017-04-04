@@ -8,6 +8,7 @@ from SamplePlayer import Sample
 from SamplePlayer2 import Sample2
 from MachineLearning2 import Learner2
 from Human import Interactive
+from CardEval import CardEvaluator
 
 
 class SushiGoBoard:
@@ -22,7 +23,7 @@ class SushiGoBoard:
         self.players = []
         for i in range(self.numPlayers - 1):
             if i == 0:
-                self.players.append(Interactive(i, self.numPlayers))
+                self.players.append(CardEvaluator(i, self.numPlayers))
                 self.players.append(Learner2(i+1, self.numPlayers))
             else:
                 self.players.append(Sample(i+1, self.numPlayers))
@@ -223,7 +224,7 @@ class SushiGoBoard:
                 finalScore[-1] += score[i]
 
         return finalScore
-    
+
     def scoreSingle(self, Board):
         Score = self.scoreNigiri(Board)[0] + self.scoreSashimi(Board)[0] + self.scoreDumpling(Board)[0] + self.scoreWasabi(Board)[0] + self.scoreTempura(Board)[0]
         return Score
@@ -238,7 +239,7 @@ class SushiGoBoard:
         for player in self.players:
             player.cleanup()
 
-        
+
     def cycle(self): # think of a better name, but round is already defined in python
         self.dealHands()
         hands = []
