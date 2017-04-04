@@ -6,9 +6,11 @@ class Human(Abstract):
 
     def move(self):
         print "my current board = "
-        print self.board
+        for i in self.board:
+            print i.cardType
         print "my hand ="
-        print self.hand
+        for i in self.hand:
+            print i.cardType
         print "Please select your card."
         self.cardchoice = 0
         UserInput = raw_input()

@@ -38,7 +38,7 @@ class SushiGoBoard:
         self.deck = Deck()
         self.deck.generate(distribution)
         self.deck.shuffle()
-        print (self.deck.cards)
+        # print (self.deck.cards)
  #       self.deck = np.array([])
 #        for cardType in distribution:
 #            # print cardType

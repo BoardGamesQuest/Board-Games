@@ -61,7 +61,7 @@ class Tempura(AbstractCard):
 
 class Maki(AbstractCard): # I do not like that the formating of ths and the nigiri card is different from the rest. this one is also harder to score, any Ideas?
     def __init__(self, size):
-        super(Maki, self).__init__(('Maki' + str(size)))
+        super(Maki, self).__init__(('Maki ' + str(size)))
         self.size = size
 
 #    def getSize(self):
