@@ -17,8 +17,9 @@ class SushiGoBoard:
             self.maxRounds = 3
         self.debugMode = debugMode
         self.players = []
-        for i in range(self.numPlayers):
-            self.players.append(Human(i, self.numPlayers))
+        for i in range(self.numPlayers-1):
+            self.players.append(Sample(i, self.numPlayers, self))
+        self.players.append(Human(self.numPlayers-1, self.numPlayers, self))
         self.numRound = 0
 
 
@@ -221,17 +222,17 @@ class SushiGoBoard:
     def cycle(self): # think of a better name, but round is already defined in python
         self.dealHands()
         hands = []
-        emptyHands = 0
+        # emptyHands = 0
         while True:
             for player in self.players:
                 move = player.move()
-                print (move)
+                # print (move)
             for player in self.players:
                 hands.append(player.giveHand())
-            for hand in hands:
-                if len(hand) == 0:
-                    emptyHands += 1
-            if emptyHands == len(hands):
+            # for hand in hands:
+            #     if len(hand) == 0:
+            #         emptyHands += 1
+            if 0 == len(hands[0]):
                 print('round over')
                 break
             hands.append(hands[0])

@@ -7,5 +7,5 @@ from Cards import *
 from SamplePlayer import Sample
 from SushiGo import SushiGoBoard
 
-game = SushiGoBoard([2,3], False)
+game = SushiGoBoard([2,3], True)
 game.run()

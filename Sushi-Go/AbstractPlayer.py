@@ -3,11 +3,12 @@ from abc import ABCMeta, abstractmethod
 
 class Abstract:
     __metaclass__ = ABCMeta
-    def __init__(self, playerNum, numPlayers):
+    def __init__(self, playerNum, numPlayers, SushiGo):
         self.playerNum = playerNum
         self.hand = []
         self.score = 0
         self.board = []
+        self.SushiGo = SushiGo
 
 
 #    def scoreBoard(self):

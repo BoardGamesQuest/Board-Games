@@ -1,10 +1,18 @@
 from AbstractPlayer import Abstract
 
 class Human(Abstract):
-    def __init__(self, playerNum, numPlayers):
-        super(Human, self).__init__(playerNum, numPlayers)
+    def __init__(self, playerNum, numPlayers, SushiGo):
+        super(Human, self).__init__(playerNum, numPlayers, SushiGo)
 
     def move(self):
+        print "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nNEW TURN"
+        for i in self.SushiGo.players:
+            if i.playerNum == self.playerNum:
+                print "Player {} (you) has:".format(i.playerNum)
+            else:
+                print "Player {} has:".format(i.playerNum)
+                for j in i.board:
+                    print j.cardType+", ",
         print "my current board = "
         for i in self.board:
             print i.cardType
