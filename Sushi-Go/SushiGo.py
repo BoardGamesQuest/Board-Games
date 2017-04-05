@@ -9,6 +9,7 @@ from SamplePlayer2 import Sample2
 from MachineLearning2 import Learner2
 from Human import Interactive
 from CardEval import CardEvaluator
+import math
 
 
 class SushiGoBoard:
@@ -21,7 +22,7 @@ class SushiGoBoard:
             self.maxRounds = 3
         self.debugMode = debugMode
         self.numRound = 0
-        self.setAgents()
+        self.setAgents(0, 1)
 
     def setAgents(self, numHuman=0, numLearner=0, agents=[]):
         self.players = []
@@ -33,7 +34,7 @@ class SushiGoBoard:
             numCustom = 1
             self.players.append(agents)
         for i in range(numCustom + numLearner):
-            self.players.append(Learner2(i, self.numPlayers))
+            self.players.append(Learner2(i, self.numPlayers, True))
         for i in range(numCustom + numLearner, numLearner + numHuman):
             self.players.append(Interactive(i, self.numPlayers))
         for i in range(numCustom + numLearner + numHuman, self.numPlayers):
@@ -194,7 +195,7 @@ class SushiGoBoard:
         return finalScore
 
     def scoreSingle(self, Board):
-        Score = self.scoreNigiri(Board)[0] + self.scoreSashimi(Board)[0] + self.scoreDumpling(Board)[0] + self.scoreWasabi(Board)[0] + self.scoreTempura(Board)[0]
+        Score = self.scoreNigiri([Board])[0] + self.scoreSashimi([Board])[0] + self.scoreDumpling([Board])[0] + self.scoreWasabi([Board])[0] + self.scoreTempura([Board])[0]
         return Score
 
     def setup(self):
@@ -242,25 +243,83 @@ class SushiGoBoard:
             self.setup()
             self.cycle()
             if i != (self.maxRounds - 1):
-                scores = self.score(False)
+                scores = self.score()
             else:
                 scores = self.score(True)
             #print (scores)
             for k in range(len(scores)):
                 self.players[k].score += scores[k]
+            self.cleanup()
             sortedPlayers = sorted(self.players, key=lambda player: player.score)
             for k in range(len(sortedPlayers)):
                 sortedPlayers[k].place = self.numPlayers - k
                 #print(sortedPlayers[k].place)
-            self.cleanup()
             print("Round " + str(i+1) + ", Stop.")
             print("Score Board:")
             for k in range(len(self.players)):
                 print("    Player " + str(k+1) + " Scored " + str(scores[k]) + " Points this round, for a total of " +str(self.players[k].score) + " Points.")
+
+            print("Player " + str(sortedPlayers[-1].playerNum + 1) + " is in the lead")
             winner = sortedPlayers[-1].playerNum
             print("Player " + str(winner + 1) + " is in the lead")
-            winners.append(winner)
-        return winners
+                    winners.append(winner)
+                    return winners
+    def normalDistribution(self):
+        #{'Nigiri': 30, 'Wasabi': 10, 'Maki': 30, 'Dumpling': 30, 'Tempura': 30, 'Sashimi': 30, 'Pudding': 30}
+        ODDdistribution = {}
+        normHand = []
+        handSize = 12 - self.numPlayers
+        myHypoDeckSize = len(self.deck)
+        for k,v in distribution.items(): #calculates normal distribution based on 'distribution' parameter
+            if k == 'Maki':
+                ODDdistribution[k + '1'] = v/(3.0*myHypoDeckSize)
+                ODDdistribution[k + '2'] = v/(3.0*myHypoDeckSize)
+                ODDdistribution[k + '3'] = v/(3.0*myHypoDeckSize)
+            if k == 'Nigiri':
+                ODDdistribution[k + '1'] = v/(3.0*myHypoDeckSize)
+                ODDdistribution[k + '2'] = v/(3.0*myHypoDeckSize)
+                ODDdistribution[k + '3'] = v/(3.0*myHypoDeckSize)
+            else:
+                ODDdistribution[k] = v/myHypoDeckSize
+        for k in ODDdistribution.keys():
+            if ((Math.floor(ODDdistribution[k]*handSize)) != 0) : #the expected value for a single card being in the balanced hand
+                for i in range (1,(math.floor(ODDdistribution[k]*handSize))):
+                    if k == 'Nigiri1': # we need a more efficient method
+                        normHand.append(Cards.Nigiri(1))
+                    if k == 'Nigiri2': # we need a more efficient method
+                        normHand.append(Cards.Nigiri(2))
+                    if k == 'Nigiri3': # we need a more efficient method
+                        normHand.append(Cards.Nigiri(3))
+                    if k == 'Wasabi':
+                        normHand.append(Cards.Wasabi())
+                    if k == 'Sashimi':
+                        normHand.append(Cards.Sashimi())
+                    if k == 'Dumpling':
+                        normHand.append(Cards.Dumpling())
+                    if k == 'Tempura':
+                        normHand.append(Cards.Tempura())
+                    if k == 'Maki1':
+                        normHand.append(Cards.Maki(1))
+                    if k == 'Maki2':
+                        normHand.append(Cards.Maki(2))
+                    if k == 'Maki3':
+                        normHand.append(Cards.Maki(3))
+                    if k == 'Pudding':
+                        normHand.append(Cards.Pudding())
+#            while (len(normHand) < handSize): # fill remaining cards based on pure probability
+
+#                normHand.append(thisCard)
+
+        print normHand
+        return normHand
+
+SushiGo= SushiGoBoard([4,1], False)
+SushiGo.normalDistribution()
+
+
+
+
+
 
     def test(player, numRounds=100):
         oldMaxRounds = copy.copy(self.maxRounds)
@@ -272,4 +331,3 @@ class SushiGoBoard:
         numWins = winners.count(0)
         self.maxRounds = oldMaxRounds
         return np.divide(numWins, numRounds), place
-
