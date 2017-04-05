@@ -11,13 +11,12 @@ from Human import Interactive
 from CardEval import CardEvaluator
 import math
 
+distribution = {'Nigiri': 30, 'Wasabi': 10, 'Maki': 30, 'Dumpling': 30, 'Tempura': 30, 'Sashimi': 30, 'Pudding': 30}# someone needs to find the actuall distribution for cards
 
 class SushiGoBoard:
     def __init__(self, numPlayers=4, maxRounds=3, debugMode=False):
         self.numPlayers, self.maxRounds, self.debugMode = numPlayers, maxRounds, debugMode
         self.handSize = 12 - self.numPlayers
-        self.debugMode = debugMode
-        self.numRound = 0
         self.setAgents()
 
     def setAgents(self, agents=[], numHuman=0, numLearner=0):
@@ -29,7 +28,7 @@ class SushiGoBoard:
         else:
             numCustom = 1
             self.players.append(agents)
-        for i in range(numCustom + numLearner):
+        for i in range(numCustom, numLearner):
             self.players.append(Learner2(i, self.numPlayers))
         for i in range(numCustom + numLearner, numLearner + numHuman):
             self.players.append(Interactive(i, self.numPlayers))
@@ -40,9 +39,9 @@ class SushiGoBoard:
         for player in self.players:
             print "This is player {}'s hand:".format(player.playerNum), player.hand
             print "This is player {}'s board:".format(player.playerNum), player.board
+        #maybe move print winners to here and make scores a property of the class
 
     def generateDeck(self):
-        distribution = {'Nigiri': 30, 'Wasabi': 10, 'Maki': 30, 'Dumpling': 30, 'Tempura': 30, 'Sashimi': 30, 'Pudding': 30}# someone needs to find the actuall distribution for cards
         self.deck = Deck()
         self.deck.generate(distribution)
         self.deck.shuffle()
@@ -200,11 +199,12 @@ class SushiGoBoard:
                 self.players[i].board.append(move)
                 if self.debugMode:
                     print "Player " + str(i+1) + " played a " + move.cardType + "."
-            self.passHands()
-            if self.debugMode:
-                print "Passing Hands. Next Turn."
+            if turn != self.handSize - 1:
+                self.passHands()
+                if self.debugMode:
+                    print "Passing Hands. Next Turn."
 
-    def printWinners(self, roundNum=False):
+    def printWinners(self, scores, roundNum=False):
         sortedPlayers = sorted(self.players, key=lambda player: player.score)
         if type(roundNum) == int:
             print "Round " + str(roundNum+1) + ", Stop."
@@ -215,7 +215,7 @@ class SushiGoBoard:
         print "Player " + str(sortedPlayers[-1].playerNum + 1) + " is in the lead"
 
     def run(self):
-        self.generateDeck
+        self.generateDeck()
         winners = []
         for roundNum in range(self.maxRounds):
             if self.debugMode:
@@ -229,30 +229,30 @@ class SushiGoBoard:
             for k in range(self.numPlayers):
                 self.players[k].score += scores[k]
             self.cleanup()
-            self.printWinners(True)
+            if self.debugMode:
+                self.printWinners(scores, roundNum)
         sortedPlayers = sorted(self.players, key=lambda player: player.score)
         winner = sortedPlayers[-1].playerNum
         return winner
 
-    def test(player, numGames=100):
-        #oldMaxRounds = copy.copy(self.maxRounds)
-        #self.maxRounds = numRounds
+    def test(self, player, numGames=100):
         self.setAgents(agents=player)
+        oldDebugMode = copy.copy(self.debugMode)
+        self.debugMode = False
         winners = []
         for i in range(numGames):
             winners.append(self.run())
         sortedPlayers = sorted(self.players, key=lambda player: player.score)
-        place = numPlayers - sortedPlayers.index(player)
+        place = self.numPlayers - sortedPlayers.index(player)
         numWins = winners.count(0)
-        #self.maxRounds = oldMaxRounds
+        self.debugMode = oldDebugMode
+        print winners
         return np.divide(numWins, numGames), place
 
     def normalDistribution(self):
             jankrandomarray = []
-            distribution ={'Nigiri': 30, 'Wasabi': 10, 'Maki': 30, 'Dumpling': 30, 'Tempura': 30, 'Sashimi': 30, 'Pudding': 30}
             ODDdistribution = {}
             normHand = []
-            handSize = 12 - self.numPlayers
             myHypoDeckSize = 190.0#len(self.deck)
             for k,v in distribution.items(): #calculates normal distribution based on 'distribution' parameter
                 print k
@@ -268,9 +268,9 @@ class SushiGoBoard:
                     ODDdistribution[k] = v/myHypoDeckSize
                     print ODDdistribution[k]
             for k in ODDdistribution.keys():
-                #if ((math.floor(ODDdistribution[k]*handSize)) != 0) : #the expected value for a single card being in the balanced hand
+                #if ((math.floor(ODDdistribution[k]*self.handSize)) != 0) : #the expected value for a single card being in the balanced hand
                 print k + str(ODDdistribution[k])
-                for i in range(int(np.floor(ODDdistribution[k]*handSize))):
+                for i in range(int(np.floor(ODDdistribution[k]*self.handSize))):
                     if k == 'Nigiri1': # we need a more efficient method
                             normHand.append(Cards.Nigiri(1))
                     if k == 'Nigiri2': # we need a more efficient method
@@ -321,7 +321,7 @@ class SushiGoBoard:
                 if k == 'Pudding':
                     for j in range(distribution[k]):
                         jankrandomarray.append(Cards.Pudding())
-            while (len(normHand) < handSize): # fill remaining cards based on pure probability
+            while (len(normHand) < self.handSize): # fill remaining cards based on pure probability
                 normHand.append(jankrandomarray[random.randint(0,myHypoDeckSize)])
 
 
