@@ -4,7 +4,7 @@ class Sample2(Abstract):
     def __init__(self, playerNum, numPlayers):
         super(Sample2, self).__init__(playerNum, numPlayers)
 
-    def move(self):
+    def move(self, game):
         card = self.hand.pop(0)
         if card.cardType == 'Nigiri 1' or card.cardType == 'Nigiri 2' or card.cardType == 'Nigiri 3':
             for card2 in self.board:

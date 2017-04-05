@@ -8,6 +8,7 @@ from SamplePlayer import Sample
 from SamplePlayer2 import Sample2
 from MachineLearning2 import Learner2
 from Human import Interactive
+from CardEval import CardEvaluator
 
 
 class SushiGoBoard:
@@ -19,6 +20,16 @@ class SushiGoBoard:
         else:
             self.maxRounds = 3
         self.debugMode = debugMode
+<<<<<<< HEAD
+=======
+        self.players = []
+        for i in range(self.numPlayers - 1):
+            if i == 0:
+                self.players.append(CardEvaluator(i, self.numPlayers))
+                self.players.append(Learner2(i+1, self.numPlayers))
+            else:
+                self.players.append(Sample(i+1, self.numPlayers))
+>>>>>>> e5129653572fd1a499923dfcd3e1b812269106cd
         self.numRound = 0
         self.setAgents()
 
@@ -172,7 +183,7 @@ class SushiGoBoard:
 
 
 
-    def score(self, lastround):
+    def score(self, lastround=False):
         boards = []
         for player in self.players:
             boards.append(player.board)
@@ -192,6 +203,10 @@ class SushiGoBoard:
                 finalScore[-1] += score[i]
         return finalScore
 
+    def scoreSingle(self, Board):
+        Score = self.scoreNigiri(Board)[0] + self.scoreSashimi(Board)[0] + self.scoreDumpling(Board)[0] + self.scoreWasabi(Board)[0] + self.scoreTempura(Board)[0]
+        return Score
+
     def setup(self):
         for player in self.players:
             player.setup()
@@ -202,7 +217,7 @@ class SushiGoBoard:
         for player in self.players:
             player.cleanup()
 
-        
+
     def cycle(self): # think of a better name, but round is already defined in python
         self.dealHands()
         hands = []
@@ -210,7 +225,7 @@ class SushiGoBoard:
         while True:
             print("Next Turn.")
             for i in range(len(self.players)):
-                move = self.players[i].move()
+                move = self.players[i].move(self)
                 print("Player " + str(i+1) + " played a " + move.cardType + ".")
                 #print (move)
             for player in self.players:
@@ -261,4 +276,3 @@ class SushiGoBoard:
         oldMaxRounds = copy.copy(self.maxRounds)
         self.setAgents(agents=agent)
         self.run()
-
