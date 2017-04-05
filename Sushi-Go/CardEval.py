@@ -6,9 +6,15 @@ class CardEvaluator(Abstract):
         super(CardEvaluator, self).__init__(playerNum, numPlayers, game)
         self.pastScore = 0
         for i in range(numPlayers):
-            self.prevHands[i] = self.game.normalDist()
+            self.prevHands[i] = self.game.normalDistribution()
+        self.handTracker = 0
+
+    # def takeHand(self, hand):
+    #     super(CardEvaluatior, self).takeHand(self, hand)
+    #     # self.prevHands[self.handTracker] = hand
 
     def move(self):
+        self.prevHands[self.handTracker] = copy.deepcopy(self.hand)
         temp = (self.hand[0], 0)
         for cards in self.hand:
             if self.ScoreCard(game, cards) > temp[1]:
@@ -16,6 +22,8 @@ class CardEvaluator(Abstract):
 
         self.hand.remove(temp[0])
         self.board.append(temp[0])
+        self.prevHands[self.handTracker] = copy.deepcopy(self.hand)
+        self.handTracker = (self.handTracker + 1) % self.numPlayers
         return temp[0]
 
     def ScoreCard(self, card):
@@ -24,4 +32,17 @@ class CardEvaluator(Abstract):
         # tempBoard2 = copy.deepcopy(self.board).append(card)
         if self.game.scoreSingle(self.board+[card])-self.game.scoreSingle(self.board)>0:
             return self.game.scoreSingle(self.board+[card])-self.game.scoreSingle(self.board)
-        # elif (card.cardType == "Tempura"):
+        elif (card.cardType == "Tempura"):
+            tempPrevHands = copy.deepcopy(self.prevHands)
+            tempPrevHands[self.handTracker].remove(card)
+            totalScore = 0
+            for hand in self.prevHands:
+                tempuraTracker = 0
+                for card in hand:
+                    if (card.cardType == "Tempura"):
+                        tempuraTracker++
+                score = 2.5*tempuraTracker/(2*self.numPlayers-tempuraTracker)
+                if (score > 2.5):
+                    score = 2.5
+                totalScore = (totalScore+score)/(1+totalScore*score/2.5^2)
+            return totalScore
