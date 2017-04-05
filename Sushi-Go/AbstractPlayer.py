@@ -1,6 +1,5 @@
 import random
 from abc import ABCMeta, abstractmethod
-from Cards import Pudding
 
 class Abstract:
     __metaclass__ = ABCMeta
@@ -8,30 +7,20 @@ class Abstract:
         self.playerNum = playerNum
         self.round = 0
         self.score = 0
-        self.setup()
+        self.board = []
 
     def takeHand(self, hand):
         self.hand = hand
-
-    def giveHand(self):
-        return self.hand
 
     def move(self, game):
         raise NotImplementedError('Each player must have a move() function')
         # each player/algorithm should overide this method to return the card of choice
 
     def cleanup(self):
-        pass
-
-    def setup(self):
         self.hand = []
-        self.place = 0
-        try:
-            newBoard = []
-            for card in self.board:
-                if type(card) == Pudding:
-                    newBoard.append(card)
-            self.board = newBoard
-        except:
-            self.board = []
+        newBoard = []
+        for card in self.board:
+            if card.cardType == 'Pudding':
+                newBoard.append(card)
+        self.board = newBoard
         

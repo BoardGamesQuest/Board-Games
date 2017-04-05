@@ -8,5 +8,4 @@ class Sample(Abstract):
 
     def move(self, game):
         card = self.hand.pop(0)
-        self.board.append(card) #adds the card to the board
         return card # returns card if the game needs it
