@@ -262,9 +262,14 @@ class SushiGoBoard:
             winners.append(winner)
         return winners
 
-    def test(agent, numRounds=100):
+    def test(player, numRounds=100):
         oldMaxRounds = copy.copy(self.maxRounds)
-        self.setAgents(agents=agent)
+        self.maxRounds = numRounds
+        self.setAgents(agents=player)
         winners = self.run()
-        # sortedPlayers = sorted(self.players, key=lambda player: player.score)
+        sortedPlayers = sorted(self.players, key=lambda player: player.score)
+        place = sortedPlayers.index(player)
+        numWins = winners.count(0)
+        self.maxRounds = oldMaxRounds
+        return np.divide(numWins, numRounds), place
 
