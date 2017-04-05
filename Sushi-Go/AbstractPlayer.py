@@ -1,11 +1,13 @@
 import random
 from abc import ABCMeta, abstractmethod
+from Cards import Pudding
 
 class Abstract:
     __metaclass__ = ABCMeta
-    def __init__(self, playerNum, numPlayers, otherPlayers):
+    def __init__(self, playerNum, numPlayers):
         self.playerNum = playerNum
         self.round = 0
+        self.score = 0
         self.setup()
 
     def takeHand(self, hand):
@@ -19,11 +21,17 @@ class Abstract:
         # each player/algorithm should overide this method to return the card of choice
 
     def cleanup(self):
-        roundNum = self.setup()
-        self.round += 1
+        pass
 
     def setup(self):
         self.hand = []
-        self.score = 0
-        self.board = []
         self.place = 0
+        try:
+            newBoard = []
+            for card in self.board:
+                if type(card) == Pudding:
+                    newBoard.append(card)
+            self.board = newBoard
+        except:
+            self.board = []
+        
