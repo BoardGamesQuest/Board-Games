@@ -23,4 +23,6 @@ class Abstract:
             if card.cardType == 'Pudding':
                 newBoard.append(card)
         self.board = newBoard
-        
+
+    def setup(self):
+        pass
