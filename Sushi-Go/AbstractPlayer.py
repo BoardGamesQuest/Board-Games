@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 
 class Abstract:
     __metaclass__ = ABCMeta
-    def __init__(self, playerNum, numPlayers, otherPlayers):
+    def __init__(self, playerNum, numPlayers):
         self.playerNum = playerNum
         self.round = 0
         self.setup()

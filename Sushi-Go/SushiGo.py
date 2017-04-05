@@ -23,8 +23,8 @@ class SushiGoBoard:
         self.players = []
         for i in range(self.numPlayers - 1):
             if i == 0:
+                self.players.append(Learner2(i+1, self.numPlayers, True))
                 self.players.append(CardEvaluator(i, self.numPlayers))
-                self.players.append(Learner2(i+1, self.numPlayers))
             else:
                 self.players.append(Sample(i+1, self.numPlayers))
         self.numRound = 0
@@ -226,7 +226,7 @@ class SushiGoBoard:
         return finalScore
 
     def scoreSingle(self, Board):
-        Score = self.scoreNigiri(Board)[0] + self.scoreSashimi(Board)[0] + self.scoreDumpling(Board)[0] + self.scoreWasabi(Board)[0] + self.scoreTempura(Board)[0]
+        Score = self.scoreNigiri([Board])[0] + self.scoreSashimi([Board])[0] + self.scoreDumpling([Board])[0] + self.scoreWasabi([Board])[0] + self.scoreTempura([Board])[0]
         return Score
 
     def setup(self):
@@ -273,7 +273,7 @@ class SushiGoBoard:
             self.setup()
             self.cycle()
             if i != (self.maxRounds - 1):
-                scores = self.score(False)
+                scores = self.score()
             else:
                 scores = self.score(True)
             #print (scores)
@@ -283,7 +283,6 @@ class SushiGoBoard:
             for k in range(len(sortedPlayers)):
                 sortedPlayers[k].place = self.numPlayers - k
                 #print(sortedPlayers[k].place)
-            self.cleanup()
             print("Round " + str(i+1) + ", Stop.")
             print("Score Board:")
             for k in range(len(self.players)):

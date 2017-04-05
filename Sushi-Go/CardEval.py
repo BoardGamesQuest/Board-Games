@@ -10,8 +10,11 @@ class CardEvaluator(Abstract):
     def move(self, game):
         temp = (self.hand[0], 0)
         for cards in self.hand:
-            if ScoreCard(game, cards) > temp[1]:
-                temp = (cards, ScoreCard(game, cards))
+            if self.ScoreCard(game, cards) > temp[1]:
+                temp = (cards, self.ScoreCard(game, cards))
+
+        self.hand.remove(temp[0])
+        self.board.append(temp[0])
         return temp[0]
 
     def ScoreCard(self, game, card):
