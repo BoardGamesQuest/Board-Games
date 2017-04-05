@@ -20,18 +20,8 @@ class SushiGoBoard:
         else:
             self.maxRounds = 3
         self.debugMode = debugMode
-<<<<<<< HEAD
-=======
-        self.players = []
-        for i in range(self.numPlayers - 1):
-            if i == 0:
-                self.players.append(Learner2(i+1, self.numPlayers, True))
-                self.players.append(CardEvaluator(i, self.numPlayers))
-            else:
-                self.players.append(Sample(i+1, self.numPlayers))
->>>>>>> e5129653572fd1a499923dfcd3e1b812269106cd
         self.numRound = 0
-        self.setAgents()
+        self.setAgents(0, 1)
 
     def setAgents(self, numHuman=0, numLearner=0, agents=[]):
         self.players = []
@@ -43,7 +33,7 @@ class SushiGoBoard:
             numCustom = 1
             self.players.append(agents)
         for i in range(numCustom + numLearner):
-            self.players.append(Learner2(i, self.numPlayers))
+            self.players.append(Learner2(i, self.numPlayers, True))
         for i in range(numCustom + numLearner, numLearner + numHuman):
             self.players.append(Interactive(i, self.numPlayers))
         for i in range(numCustom + numLearner + numHuman, self.numPlayers):
@@ -258,6 +248,7 @@ class SushiGoBoard:
             #print (scores)
             for k in range(len(scores)):
                 self.players[k].score += scores[k]
+            self.cleanup()
             sortedPlayers = sorted(self.players, key=lambda player: player.score)
             for k in range(len(sortedPlayers)):
                 sortedPlayers[k].place = self.numPlayers - k

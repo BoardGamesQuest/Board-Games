@@ -20,8 +20,7 @@ class Abstract:
         # each player/algorithm should overide this method to return the card of choice
 
     def cleanup(self):
-        roundNum = self.setup()
-        self.round += 1
+        pass
 
     def setup(self):
         self.hand = []
