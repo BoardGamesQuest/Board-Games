@@ -264,6 +264,18 @@ class SushiGoBoard:
             print("Player " + str(winner + 1) + " is in the lead")
                     winners.append(winner)
                     return winners
+
+    def test(player, numRounds=100):
+        oldMaxRounds = copy.copy(self.maxRounds)
+        self.maxRounds = numRounds
+        self.setAgents(agents=player)
+        winners = self.run()
+        sortedPlayers = sorted(self.players, key=lambda player: player.score)
+        place = sortedPlayers.index(player)
+        numWins = winners.count(0)
+        self.maxRounds = oldMaxRounds
+        return np.divide(numWins, numRounds), place
+    
     def normalDistribution(self):
         #{'Nigiri': 30, 'Wasabi': 10, 'Maki': 30, 'Dumpling': 30, 'Tempura': 30, 'Sashimi': 30, 'Pudding': 30}
         ODDdistribution = {}
@@ -313,21 +325,12 @@ class SushiGoBoard:
         print normHand
         return normHand
 
-SushiGo= SushiGoBoard([4,1], False)
-SushiGo.normalDistribution()
+# SushiGo= SushiGoBoard([4,1], False)
+# SushiGo.normalDistribution()
 
 
 
 
 
 
-    def test(player, numRounds=100):
-        oldMaxRounds = copy.copy(self.maxRounds)
-        self.maxRounds = numRounds
-        self.setAgents(agents=player)
-        winners = self.run()
-        sortedPlayers = sorted(self.players, key=lambda player: player.score)
-        place = sortedPlayers.index(player)
-        numWins = winners.count(0)
-        self.maxRounds = oldMaxRounds
-        return np.divide(numWins, numRounds), place
+    
