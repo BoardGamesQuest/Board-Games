@@ -20,6 +20,8 @@ class SushiGoBoard:
         else:
             self.maxRounds = 3
         self.debugMode = debugMode
+<<<<<<< HEAD
+=======
         self.players = []
         for i in range(self.numPlayers - 1):
             if i == 0:
@@ -27,14 +29,25 @@ class SushiGoBoard:
                 self.players.append(CardEvaluator(i, self.numPlayers))
             else:
                 self.players.append(Sample(i+1, self.numPlayers))
+>>>>>>> e5129653572fd1a499923dfcd3e1b812269106cd
         self.numRound = 0
+        self.setAgents()
 
-
-    # def reset():
-    #     for player in players:
-    #         player.hand = player.generateHand
-    #         # someone write generateHand plz
-    #         player.board = []
+    def setAgents(self, numHuman=0, numLearner=0, agents=[]):
+        self.players = []
+        if type(agents) == list:
+            numCustom = len(agents)
+            for i in range(numCustom):
+                self.players.append(agents[i])
+        else:
+            numCustom = 1
+            self.players.append(agents)
+        for i in range(numCustom + numLearner):
+            self.players.append(Learner2(i, self.numPlayers))
+        for i in range(numCustom + numLearner, numLearner + numHuman):
+            self.players.append(Interactive(i, self.numPlayers))
+        for i in range(numCustom + numLearner + numHuman, self.numPlayers):
+            self.players.append(Sample(i, self.numPlayers))
 
     def display(self):
         for player in self.players:
@@ -46,45 +59,11 @@ class SushiGoBoard:
         self.deck = Deck()
         self.deck.generate(distribution)
         self.deck.shuffle()
-        #print (self.deck.cards)
- #       self.deck = np.array([])
-#        for cardType in distribution:
-#            # print cardType
-#            if type(distribution[cardType]) == list:
-#                for variation in range(len(distribution[cardType])):
-#                    # print np.repeat(cardType(variation), distribution[cardType][variation])
-#                    self.deck = np.append(self.deck, np.repeat(cardType(variation), distribution[cardType][variation]))
-#            else:
-#                self.deck = np.append(self.deck, np.repeat(cardType(), distribution[cardType]))
-#        print self.deck
-
-#    def shuffleDeck(self):
-#        np.random.shuffle(self.deck) # already in the Deck class
 
     def dealHands(self):
         handSize = 12 - self.numPlayers
         for player in self.players:
             player.takeHand(self.deck.getHand(handSize))
-            # player.hand = hand
-
-#    def selectCards(self):
-#        # temporary
-#        move = Card("Squid Nigiri")
-
-
-# not needed for this version of game, might be usefull for debugging
-#    def getCard(self):
-#        return self.deck.getCard() # if already shuffled otherwise we should take a random card
-
-#    def removeCard(self, card):
-#        self.deck.removeCard(card) # removes the first instance of the given card from the deck
-
-#    def addCard(self, card):
-#        self.deck.addCard(card) # adds a card to a random spot in the deck
-
-#    def processMoves(self, player, move):
-#        player.hand.remove(move)
-#        player.board.append(move)
 
     def passHands(self):
         # this might be pretty inefficient, optimize plz
@@ -222,7 +201,6 @@ class SushiGoBoard:
             finalScore.append(0)
             for score in scores:
                 finalScore[-1] += score[i]
-
         return finalScore
 
     def scoreSingle(self, Board):
@@ -268,6 +246,7 @@ class SushiGoBoard:
 
     def run(self):
         self.generateDeck()
+        winners = []
         for i in range(self.maxRounds):
             print("Round " + str(i+1) + ", Start.")
             self.setup()
@@ -287,13 +266,12 @@ class SushiGoBoard:
             print("Score Board:")
             for k in range(len(self.players)):
                 print("    Player " + str(k+1) + " Scored " + str(scores[k]) + " Points this round, for a total of " +str(self.players[k].score) + " Points.")
-            print("Player " + str(sortedPlayers[-1].playerNum + 1) + " is in the lead")
+            winner = sortedPlayers[-1].playerNum
+            print("Player " + str(winner + 1) + " is in the lead")
+            winners.append(winner)
+        return winners
 
-
-
-    # def runGame():
-    #     numRound = 0
-    #     for player in self.players:
-    #         player.generateHand()
-    #     self.display()
-    #     while player.
+    def test(agent, numRounds=100):
+        oldMaxRounds = copy.copy(self.maxRounds)
+        self.setAgents(agents=agent)
+        self.run()

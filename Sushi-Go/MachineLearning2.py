@@ -142,7 +142,7 @@ class Learner2(Abstract):
                     if (self.pastMatchData[key]["Score"] > self.pastMatchData[best]["Score"]) and not(key in top10):
                         best = key
             top10.append(best)
-        #print (top10)
+        # print (top10)
         for key in top10:
             topScoresTotal += self.pastMatchData[key]["Score"]
         for key in top10:
