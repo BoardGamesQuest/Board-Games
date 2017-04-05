@@ -13,12 +13,9 @@ import math
 
 
 class SushiGoBoard:
-<<<<<<< HEAD
     def __init__(self, numPlayers=4, maxRounds=3, debugMode=False):
         self.numPlayers, self.maxRounds, self.debugMode = numPlayers, maxRounds, debugMode
         self.handSize = 12 - self.numPlayers
-=======
-    def __init__(self, params, debugMode=False):
         if type(params) == list:
             self.numPlayers = params[0]
         if type(params) == list and len(params) > 1:
@@ -27,7 +24,6 @@ class SushiGoBoard:
             self.maxRounds = 3
         self.debugMode = debugMode
         self.numRound = 0
->>>>>>> 24c5308f5a487a19fb04d6e49ce83b13f9ef8f5a
         self.setAgents()
 
     def setAgents(self, agents=[], numHuman=0, numLearner=0):
@@ -239,29 +235,9 @@ class SushiGoBoard:
             for k in range(self.numPlayers):
                 self.players[k].score += scores[k]
             self.cleanup()
-            if self.debugMode:
-                self.printWinners
+            self.printWinners(True)
         sortedPlayers = sorted(self.players, key=lambda player: player.score)
         winner = sortedPlayers[-1].playerNum
-        return winner
-
-    def test(self, player, numRounds=100):
-        self.setAgents(agents=player)
-        winners = []
-        for i in range(numRounds):
-            winners.append(self.run())
-            scores = [player.score for player in self.players]
-=======
-            sortedPlayers = sorted(self.players, key=lambda player: player.score)
-            for k in range(len(sortedPlayers)):
-                sortedPlayers[k].place = self.numPlayers - k
-                #print(sortedPlayers[k].place)
-            print("Round " + str(i+1) + ", Stop.")
-            print("Score Board:")
-            for k in range(len(self.players)):
-                print("    Player " + str(k+1) + " Scored " + str(scores[k]) + " Points this round, for a total of " +str(self.players[k].score) + " Points.")
-            winner = sortedPlayers[-1].playerNum
-            print("Player " + str(winner + 1) + " is in the lead")
         return winner
 
     def test(player, numGames=100):
@@ -271,17 +247,11 @@ class SushiGoBoard:
         winners = []
         for i in range(numGames):
             winners.append(self.run())
->>>>>>> 24c5308f5a487a19fb04d6e49ce83b13f9ef8f5a
         sortedPlayers = sorted(self.players, key=lambda player: player.score)
         place = numPlayers - sortedPlayers.index(player)
         numWins = winners.count(0)
-<<<<<<< HEAD
-        self.maxRounds = oldMaxRounds
-        return np.divide(numWins, numRounds), place
-=======
         #self.maxRounds = oldMaxRounds
         return np.divide(numWins, numGames), place
->>>>>>> 24c5308f5a487a19fb04d6e49ce83b13f9ef8f5a
 
     def normalDistribution(self):
             jankrandomarray = []
@@ -328,15 +298,6 @@ class SushiGoBoard:
                     if k == 'Maki3':
                             normHand.append(Cards.Maki(3))
                     if k == 'Pudding':
-<<<<<<< HEAD
-                        normHand.append(Cards.Pudding())
-#            while (len(normHand) < handSize): # fill remaining cards based on pure probability
-
-#                normHand.append(thisCard)
-
-        print normHand
-        return normHand
-=======
                             normHand.append(Cards.Pudding())
             for k in distribution:
                 print k
@@ -378,5 +339,3 @@ class SushiGoBoard:
 
 # SushiGo= SushiGoBoard([4,1], False)
 # SushiGo.normalDistribution()
-
->>>>>>> 24c5308f5a487a19fb04d6e49ce83b13f9ef8f5a
