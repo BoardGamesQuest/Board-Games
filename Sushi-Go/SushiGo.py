@@ -265,4 +265,6 @@ class SushiGoBoard:
     def test(agent, numRounds=100):
         oldMaxRounds = copy.copy(self.maxRounds)
         self.setAgents(agents=agent)
-        self.run()
+        winners = self.run()
+        # sortedPlayers = sorted(self.players, key=lambda player: player.score)
+

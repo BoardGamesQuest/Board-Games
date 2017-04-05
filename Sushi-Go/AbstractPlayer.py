@@ -1,5 +1,6 @@
 import random
 from abc import ABCMeta, abstractmethod
+from Cards import Pudding
 
 class Abstract:
     __metaclass__ = ABCMeta
@@ -28,8 +29,9 @@ class Abstract:
         try:
             newBoard = []
             for card in self.board:
-                if type(card) == Nigiri:
+                if type(card) == Pudding:
                     newBoard.append(card)
+            self.board = newBoard
         except:
             self.board = []
-        self.board = newBoard
+        
