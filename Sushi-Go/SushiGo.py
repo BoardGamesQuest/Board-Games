@@ -16,12 +16,6 @@ class SushiGoBoard:
     def __init__(self, numPlayers=4, maxRounds=3, debugMode=False):
         self.numPlayers, self.maxRounds, self.debugMode = numPlayers, maxRounds, debugMode
         self.handSize = 12 - self.numPlayers
-        if type(params) == list:
-            self.numPlayers = params[0]
-        if type(params) == list and len(params) > 1:
-            self.maxRounds = params[1] #default should be 3
-        else:
-            self.maxRounds = 3
         self.debugMode = debugMode
         self.numRound = 0
         self.setAgents()
