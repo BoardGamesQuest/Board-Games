@@ -8,7 +8,7 @@ from SamplePlayer import Sample
 from SamplePlayer2 import Sample2
 from MachineLearning2 import Learner2
 from Human import Interactive
-from CardEval import CardEvaluator
+#from CardEval import CardEvaluator
 
 
 class SushiGoBoard:
@@ -21,7 +21,7 @@ class SushiGoBoard:
             self.maxRounds = 3
         self.debugMode = debugMode
         self.numRound = 0
-        self.setAgents(0, 1)
+        self.setAgents(0, self.numPlayers)
 
     def setAgents(self, numHuman=0, numLearner=0, agents=[]):
         self.players = []
@@ -33,7 +33,7 @@ class SushiGoBoard:
             numCustom = 1
             self.players.append(agents)
         for i in range(numCustom + numLearner):
-            self.players.append(Learner2(i, self.numPlayers, True))
+            self.players.append(Learner2(i, self.numPlayers))
         for i in range(numCustom + numLearner, numLearner + numHuman):
             self.players.append(Interactive(i, self.numPlayers))
         for i in range(numCustom + numLearner + numHuman, self.numPlayers):
@@ -265,6 +265,4 @@ class SushiGoBoard:
     def test(agent, numRounds=100):
         oldMaxRounds = copy.copy(self.maxRounds)
         self.setAgents(agents=agent)
-        winners = self.run()
-        # sortedPlayers = sorted(self.players, key=lambda player: player.score)
-
+        self.run()
