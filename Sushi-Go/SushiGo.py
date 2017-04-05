@@ -9,6 +9,7 @@ from SamplePlayer2 import Sample2
 from MachineLearning2 import Learner2
 from Human import Interactive
 from CardEval import CardEvaluator
+import math
 
 
 class SushiGoBoard:
@@ -289,6 +290,59 @@ class SushiGoBoard:
             for k in range(len(self.players)):
                 print("    Player " + str(k+1) + " Scored " + str(scores[k]) + " Points this round, for a total of " +str(self.players[k].score) + " Points.")
             print("Player " + str(sortedPlayers[-1].playerNum + 1) + " is in the lead")
+
+    def normalDistribution(self):
+        #{'Nigiri': 30, 'Wasabi': 10, 'Maki': 30, 'Dumpling': 30, 'Tempura': 30, 'Sashimi': 30, 'Pudding': 30}
+        ODDdistribution = {}
+        normHand = []
+        handSize = 12 - self.numPlayers
+        myHypoDeckSize = len(self.deck)
+        for k,v in distribution.items(): #calculates normal distribution based on 'distribution' parameter
+            if k == 'Maki':
+                ODDdistribution[k + '1'] = v/(3.0*myHypoDeckSize)
+                ODDdistribution[k + '2'] = v/(3.0*myHypoDeckSize)
+                ODDdistribution[k + '3'] = v/(3.0*myHypoDeckSize)
+            if k == 'Nigiri':
+                ODDdistribution[k + '1'] = v/(3.0*myHypoDeckSize)
+                ODDdistribution[k + '2'] = v/(3.0*myHypoDeckSize)
+                ODDdistribution[k + '3'] = v/(3.0*myHypoDeckSize)
+            else:
+                ODDdistribution[k] = v/myHypoDeckSize
+        for k in ODDdistribution.keys():
+            if ((Math.floor(ODDdistribution[k]*handSize)) != 0) : #the expected value for a single card being in the balanced hand
+                for i in range (1,(math.floor(ODDdistribution[k]*handSize))):
+                    if k == 'Nigiri1': # we need a more efficient method
+                        normHand.append(Cards.Nigiri(1))
+                    if k == 'Nigiri2': # we need a more efficient method
+                        normHand.append(Cards.Nigiri(2))
+                    if k == 'Nigiri3': # we need a more efficient method
+                        normHand.append(Cards.Nigiri(3))
+                    if k == 'Wasabi':
+                        normHand.append(Cards.Wasabi())
+                    if k == 'Sashimi':
+                        normHand.append(Cards.Sashimi())
+                    if k == 'Dumpling':
+                        normHand.append(Cards.Dumpling())
+                    if k == 'Tempura':
+                        normHand.append(Cards.Tempura())
+                    if k == 'Maki1':
+                        normHand.append(Cards.Maki(1))
+                    if k == 'Maki2':
+                        normHand.append(Cards.Maki(2))
+                    if k == 'Maki3':
+                        normHand.append(Cards.Maki(3))
+                    if k == 'Pudding':
+                        normHand.append(Cards.Pudding())
+#            while (len(normHand) < handSize): # fill remaining cards based on pure probability
+
+#                normHand.append(thisCard)
+
+        print normHand
+        return normHand
+
+SushiGo= SushiGoBoard([4,1], False)
+SushiGo.normalDistribution()
+
 
 
 
