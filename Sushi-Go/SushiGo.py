@@ -22,7 +22,7 @@ class SushiGoBoard:
             self.maxRounds = 3
         self.debugMode = debugMode
         self.numRound = 0
-        self.setAgents(0, self.numPlayers)
+        self.setAgents()
 
     def setAgents(self, numHuman=0, numLearner=0, agents=[]):
         self.players = []
@@ -237,7 +237,6 @@ class SushiGoBoard:
 
     def run(self):
         self.generateDeck()
-        winners = []
         for i in range(self.maxRounds):
             print("Round " + str(i+1) + ", Start.")
             self.setup()
@@ -260,21 +259,22 @@ class SushiGoBoard:
                 print("    Player " + str(k+1) + " Scored " + str(scores[k]) + " Points this round, for a total of " +str(self.players[k].score) + " Points.")
             winner = sortedPlayers[-1].playerNum
             print("Player " + str(winner + 1) + " is in the lead")
-        winners.append(winner)
-        return winners
+        return winner
 
-    def test(player, numRounds=100):
-        oldMaxRounds = copy.copy(self.maxRounds)
-        self.maxRounds = numRounds
+    def test(player, numGames=100):
+        #oldMaxRounds = copy.copy(self.maxRounds)
+        #self.maxRounds = numRounds
         self.setAgents(agents=player)
-        winners = self.run()
+        winners = []
+        for i in range(numGames):
+            winners.append(self.run())
         sortedPlayers = sorted(self.players, key=lambda player: player.score)
-        place = sortedPlayers.index(player)
+        place = numPlayers - sortedPlayers.index(player)
         numWins = winners.count(0)
-        self.maxRounds = oldMaxRounds
-        return np.divide(numWins, numRounds), place
+        #self.maxRounds = oldMaxRounds
+        return np.divide(numWins, numGames), place
 
-        def normalDistribution(self):
+    def normalDistribution(self):
             jankrandomarray = []
             distribution ={'Nigiri': 30, 'Wasabi': 10, 'Maki': 30, 'Dumpling': 30, 'Tempura': 30, 'Sashimi': 30, 'Pudding': 30}
             ODDdistribution = {}
