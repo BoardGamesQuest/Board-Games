@@ -275,62 +275,90 @@ class SushiGoBoard:
         numWins = winners.count(0)
         self.maxRounds = oldMaxRounds
         return np.divide(numWins, numRounds), place
-    
-    def normalDistribution(self):
-        #{'Nigiri': 30, 'Wasabi': 10, 'Maki': 30, 'Dumpling': 30, 'Tempura': 30, 'Sashimi': 30, 'Pudding': 30}
-        ODDdistribution = {}
-        normHand = []
-        handSize = 12 - self.numPlayers
-        myHypoDeckSize = len(self.deck)
-        for k,v in distribution.items(): #calculates normal distribution based on 'distribution' parameter
-            if k == 'Maki':
-                ODDdistribution[k + '1'] = v/(3.0*myHypoDeckSize)
-                ODDdistribution[k + '2'] = v/(3.0*myHypoDeckSize)
-                ODDdistribution[k + '3'] = v/(3.0*myHypoDeckSize)
-            if k == 'Nigiri':
-                ODDdistribution[k + '1'] = v/(3.0*myHypoDeckSize)
-                ODDdistribution[k + '2'] = v/(3.0*myHypoDeckSize)
-                ODDdistribution[k + '3'] = v/(3.0*myHypoDeckSize)
-            else:
-                ODDdistribution[k] = v/myHypoDeckSize
-        for k in ODDdistribution.keys():
-            if ((Math.floor(ODDdistribution[k]*handSize)) != 0) : #the expected value for a single card being in the balanced hand
-                for i in range (1,(math.floor(ODDdistribution[k]*handSize))):
+
+        def normalDistribution(self):
+            jankrandomarray = []
+            distribution ={'Nigiri': 30, 'Wasabi': 10, 'Maki': 30, 'Dumpling': 30, 'Tempura': 30, 'Sashimi': 30, 'Pudding': 30}
+            ODDdistribution = {}
+            normHand = []
+            handSize = 12 - self.numPlayers
+            myHypoDeckSize = 190.0#len(self.deck)
+            for k,v in distribution.items(): #calculates normal distribution based on 'distribution' parameter
+                print k
+                if k == 'Maki':
+                    ODDdistribution[k + '1'] = v/(3.0*myHypoDeckSize)
+                    ODDdistribution[k + '2'] = v/(3.0*myHypoDeckSize)
+                    ODDdistribution[k + '3'] = v/(3.0*myHypoDeckSize)
+                elif k == 'Nigiri':
+                    ODDdistribution[k + '1'] = v/(3.0*myHypoDeckSize)
+                    ODDdistribution[k + '2'] = v/(3.0*myHypoDeckSize)
+                    ODDdistribution[k + '3'] = v/(3.0*myHypoDeckSize)
+                else:
+                    ODDdistribution[k] = v/myHypoDeckSize
+                    print ODDdistribution[k]
+            for k in ODDdistribution.keys():
+                #if ((math.floor(ODDdistribution[k]*handSize)) != 0) : #the expected value for a single card being in the balanced hand
+                print k + str(ODDdistribution[k])
+                for i in range(int(np.floor(ODDdistribution[k]*handSize))):
                     if k == 'Nigiri1': # we need a more efficient method
-                        normHand.append(Cards.Nigiri(1))
+                            normHand.append(Cards.Nigiri(1))
                     if k == 'Nigiri2': # we need a more efficient method
-                        normHand.append(Cards.Nigiri(2))
+                            normHand.append(Cards.Nigiri(2))
                     if k == 'Nigiri3': # we need a more efficient method
-                        normHand.append(Cards.Nigiri(3))
+                            normHand.append(Cards.Nigiri(3))
                     if k == 'Wasabi':
-                        normHand.append(Cards.Wasabi())
+                            normHand.append(Cards.Wasabi())
                     if k == 'Sashimi':
-                        normHand.append(Cards.Sashimi())
+                            normHand.append(Cards.Sashimi())
                     if k == 'Dumpling':
-                        normHand.append(Cards.Dumpling())
+                            normHand.append(Cards.Dumpling())
                     if k == 'Tempura':
-                        normHand.append(Cards.Tempura())
+                            normHand.append(Cards.Tempura())
                     if k == 'Maki1':
-                        normHand.append(Cards.Maki(1))
+                            normHand.append(Cards.Maki(1))
                     if k == 'Maki2':
-                        normHand.append(Cards.Maki(2))
+                            normHand.append(Cards.Maki(2))
                     if k == 'Maki3':
-                        normHand.append(Cards.Maki(3))
+                            normHand.append(Cards.Maki(3))
                     if k == 'Pudding':
-                        normHand.append(Cards.Pudding())
-#            while (len(normHand) < handSize): # fill remaining cards based on pure probability
+                            normHand.append(Cards.Pudding())
+            for k in distribution:
+                print k
+                 # JANKYJANkJANK
+                if k == 'Nigiri': # we need a more efficient method
+                    for j in range(distribution[k]/3):
+                        jankrandomarray.append(Cards.Nigiri(1))
+                        jankrandomarray.append(Cards.Nigiri(2))
+                        jankrandomarray.append(Cards.Nigiri(3))
+                if k == 'Wasabi':
+                    for j in range(distribution[k]):
+                        jankrandomarray.append(Cards.Wasabi())
+                if k == 'Sashimi':
+                    for j in range(distribution[k]):
+                        jankrandomarray.append(Cards.Sashimi())
+                if k == 'Dumpling':
+                    for j in range(distribution[k]):
+                        jankrandomarray.append(Cards.Dumpling())
+                if k == 'Tempura':
+                    for j in range(distribution[k]):
+                        jankrandomarray.append(Cards.Tempura())
+                if k == 'Maki':
+                    for z in range(distribution[k]/3):
+                        jankrandomarray.append(Cards.Maki(1))
+                        jankrandomarray.append(Cards.Maki(2))
+                        jankrandomarray.append(Cards.Maki(3))
+                if k == 'Pudding':
+                    for j in range(distribution[k]):
+                        jankrandomarray.append(Cards.Pudding())
+            while (len(normHand) < handSize): # fill remaining cards based on pure probability
+                normHand.append(jankrandomarray[random.randint(0,myHypoDeckSize)])
 
-#                normHand.append(thisCard)
 
-        print normHand
-        return normHand
+
+    #                normHand.append(thisCard)
+
+            print normHand
+            return normHand
 
 # SushiGo= SushiGoBoard([4,1], False)
 # SushiGo.normalDistribution()
-
-
-
-
-
-
-    
