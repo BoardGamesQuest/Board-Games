@@ -6,6 +6,7 @@ class Abstract:
     def __init__(self, playerNum, numPlayers, otherPlayers):
         self.playerNum = playerNum
         self.round = 0
+        self.score = 0
         self.setup()
 
     def takeHand(self, hand):
@@ -24,6 +25,12 @@ class Abstract:
 
     def setup(self):
         self.hand = []
-        self.score = 0
-        self.board = []
         self.place = 0
+        try:
+            newBoard = []
+            for card in self.board:
+                if type(card) == Nigiri:
+                    newBoard.append(card)
+        except:
+            self.board = []
+        self.board = newBoard
