@@ -258,12 +258,10 @@ class SushiGoBoard:
             print("Score Board:")
             for k in range(len(self.players)):
                 print("    Player " + str(k+1) + " Scored " + str(scores[k]) + " Points this round, for a total of " +str(self.players[k].score) + " Points.")
-
-            print("Player " + str(sortedPlayers[-1].playerNum + 1) + " is in the lead")
             winner = sortedPlayers[-1].playerNum
             print("Player " + str(winner + 1) + " is in the lead")
-                    winners.append(winner)
-                    return winners
+        winners.append(winner)
+        return winners
 
     def test(player, numRounds=100):
         oldMaxRounds = copy.copy(self.maxRounds)
