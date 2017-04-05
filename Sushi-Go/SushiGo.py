@@ -13,6 +13,11 @@ import math
 
 
 class SushiGoBoard:
+<<<<<<< HEAD
+    def __init__(self, numPlayers=4, maxRounds=3, debugMode=False):
+        self.numPlayers, self.maxRounds, self.debugMode = numPlayers, maxRounds, debugMode
+        self.handSize = 12 - self.numPlayers
+=======
     def __init__(self, params, debugMode=False):
         if type(params) == list:
             self.numPlayers = params[0]
@@ -22,9 +27,10 @@ class SushiGoBoard:
             self.maxRounds = 3
         self.debugMode = debugMode
         self.numRound = 0
-        self.setAgents(0, 1)
+>>>>>>> 24c5308f5a487a19fb04d6e49ce83b13f9ef8f5a
+        self.setAgents()
 
-    def setAgents(self, numHuman=0, numLearner=0, agents=[]):
+    def setAgents(self, agents=[], numHuman=0, numLearner=0):
         self.players = []
         if type(agents) == list:
             numCustom = len(agents)
@@ -34,7 +40,7 @@ class SushiGoBoard:
             numCustom = 1
             self.players.append(agents)
         for i in range(numCustom + numLearner):
-            self.players.append(Learner2(i, self.numPlayers, True))
+            self.players.append(Learner2(i, self.numPlayers))
         for i in range(numCustom + numLearner, numLearner + numHuman):
             self.players.append(Interactive(i, self.numPlayers))
         for i in range(numCustom + numLearner + numHuman, self.numPlayers):
@@ -52,15 +58,14 @@ class SushiGoBoard:
         self.deck.shuffle()
 
     def dealHands(self):
-        handSize = 12 - self.numPlayers
         for player in self.players:
-            player.takeHand(self.deck.getHand(handSize))
+            player.takeHand(self.deck.getHand(self.handSize))
 
     def passHands(self):
-        # this might be pretty inefficient, optimize plz
-        tempPlayers = copy.deepcopy(self.players)
-        for player in self.players:
-            player.hand = tempPlayers[(player.playerNum+1)%numPlayers]
+        firstHand = copy.deepcopy(self.players[0].hand)
+        for i in range(self.numPlayers-1):
+            self.players[i].takeHand(self.players[i+1].hand)
+        self.players[-1].takeHand(firstHand)
 
     def scoreNigiri(self, boards):
         boardScores = []
@@ -174,25 +179,13 @@ class SushiGoBoard:
 
 
 
-    def score(self, lastround=False):
-        boards = []
-        for player in self.players:
-            boards.append(player.board)
-        scores = []
-        scores.append(self.scoreNigiri(boards))
-        scores.append(self.scoreSashimi(boards))
-        scores.append(self.scoreDumpling(boards))
-        scores.append(self.scoreWasabi(boards))
-        scores.append(self.scoreTempura(boards))
-        scores.append(self.scoreMaki(boards))
-        if lastround:
-            scores.append(self.scorePudding(boards))
-        finalScore = []
-        for i in range(len(scores[0])):
-            finalScore.append(0)
-            for score in scores:
-                finalScore[-1] += score[i]
-        return finalScore
+    def score(self, lastRound=False):
+        boards = [player.board for player in self.players]
+        scores = np.array([self.scoreNigiri(boards), self.scoreSashimi(boards), self.scoreDumpling(boards), self.scoreWasabi(boards), self.scoreTempura(boards), self.scoreMaki(boards)])
+        if lastRound:
+            scores = np.append(scores, np.array([self.scorePudding(boards)]), axis=0)
+        scores = np.sum(scores, axis=0)
+        return scores
 
     def scoreSingle(self, Board):
         Score = self.scoreNigiri([Board])[0] + self.scoreSashimi([Board])[0] + self.scoreDumpling([Board])[0] + self.scoreWasabi([Board])[0] + self.scoreTempura([Board])[0]
@@ -200,7 +193,6 @@ class SushiGoBoard:
 
     def setup(self):
         for player in self.players:
-            player.setup()
             player.round += 1
         #put any other code here to setup the cycle
 
@@ -212,44 +204,54 @@ class SushiGoBoard:
     def cycle(self): # think of a better name, but round is already defined in python
         self.dealHands()
         hands = []
-        emptyHands = 0
-        while True:
-            print("Next Turn.")
-            for i in range(len(self.players)):
+        for turn in range(self.handSize):
+            for i in range(self.numPlayers):
                 move = self.players[i].move(self)
-                print("Player " + str(i+1) + " played a " + move.cardType + ".")
-                #print (move)
-            for player in self.players:
-                hands.append(player.giveHand())
-            for hand in hands:
-                if len(hand) == 0:
-                    emptyHands += 1
-            if emptyHands == len(hands):
-                #print('round over')
-                break
-            print("Passing Hands.")
-            hands.append(hands[0])
-            hands = hands[1:]
-            for player in self.players:
-                player.takeHand(hands[0])
-                hands = hands[1:]
+                self.players[i].board.append(move)
+                if self.debugMode:
+                    print "Player " + str(i+1) + " played a " + move.cardType + "."
+            self.passHands()
+            if self.debugMode:
+                print "Passing Hands. Next Turn."
 
+    def printWinners(self, roundNum=False):
+        sortedPlayers = sorted(self.players, key=lambda player: player.score)
+        if type(roundNum) == int:
+            print "Round " + str(roundNum+1) + ", Stop."
+        print "Score Board:"
+        for i in range(self.numPlayers):
+            sortedPlayers[i].place = self.numPlayers - i
+            print "    Player " + str(i+1) + " Scored " + str(scores[i]) + " Points this round, for a total of " +str(self.players[i].score) + " Points."
+        print "Player " + str(sortedPlayers[-1].playerNum + 1) + " is in the lead"
 
     def run(self):
-        self.generateDeck()
+        self.generateDeck
         winners = []
-        for i in range(self.maxRounds):
-            print("Round " + str(i+1) + ", Start.")
+        for roundNum in range(self.maxRounds):
+            if self.debugMode:
+                print "Round " + str(roundNum+1) + ", Start."
             self.setup()
             self.cycle()
-            if i != (self.maxRounds - 1):
+            if roundNum != (self.maxRounds - 1):
                 scores = self.score()
             else:
-                scores = self.score(True)
-            #print (scores)
-            for k in range(len(scores)):
+                scores = self.score(lastRound=True)
+            for k in range(self.numPlayers):
                 self.players[k].score += scores[k]
             self.cleanup()
+            if self.debugMode:
+                self.printWinners
+        sortedPlayers = sorted(self.players, key=lambda player: player.score)
+        winner = sortedPlayers[-1].playerNum
+        return winner
+
+    def test(self, player, numRounds=100):
+        self.setAgents(agents=player)
+        winners = []
+        for i in range(numRounds):
+            winners.append(self.run())
+            scores = [player.score for player in self.players]
+=======
             sortedPlayers = sorted(self.players, key=lambda player: player.score)
             for k in range(len(sortedPlayers)):
                 sortedPlayers[k].place = self.numPlayers - k
@@ -258,25 +260,30 @@ class SushiGoBoard:
             print("Score Board:")
             for k in range(len(self.players)):
                 print("    Player " + str(k+1) + " Scored " + str(scores[k]) + " Points this round, for a total of " +str(self.players[k].score) + " Points.")
-
-            print("Player " + str(sortedPlayers[-1].playerNum + 1) + " is in the lead")
             winner = sortedPlayers[-1].playerNum
             print("Player " + str(winner + 1) + " is in the lead")
-                    winners.append(winner)
-                    return winners
+        return winner
 
-    def test(player, numRounds=100):
-        oldMaxRounds = copy.copy(self.maxRounds)
-        self.maxRounds = numRounds
+    def test(player, numGames=100):
+        #oldMaxRounds = copy.copy(self.maxRounds)
+        #self.maxRounds = numRounds
         self.setAgents(agents=player)
-        winners = self.run()
+        winners = []
+        for i in range(numGames):
+            winners.append(self.run())
+>>>>>>> 24c5308f5a487a19fb04d6e49ce83b13f9ef8f5a
         sortedPlayers = sorted(self.players, key=lambda player: player.score)
-        place = sortedPlayers.index(player)
+        place = numPlayers - sortedPlayers.index(player)
         numWins = winners.count(0)
+<<<<<<< HEAD
         self.maxRounds = oldMaxRounds
         return np.divide(numWins, numRounds), place
+=======
+        #self.maxRounds = oldMaxRounds
+        return np.divide(numWins, numGames), place
+>>>>>>> 24c5308f5a487a19fb04d6e49ce83b13f9ef8f5a
 
-        def normalDistribution(self):
+    def normalDistribution(self):
             jankrandomarray = []
             distribution ={'Nigiri': 30, 'Wasabi': 10, 'Maki': 30, 'Dumpling': 30, 'Tempura': 30, 'Sashimi': 30, 'Pudding': 30}
             ODDdistribution = {}
@@ -321,6 +328,15 @@ class SushiGoBoard:
                     if k == 'Maki3':
                             normHand.append(Cards.Maki(3))
                     if k == 'Pudding':
+<<<<<<< HEAD
+                        normHand.append(Cards.Pudding())
+#            while (len(normHand) < handSize): # fill remaining cards based on pure probability
+
+#                normHand.append(thisCard)
+
+        print normHand
+        return normHand
+=======
                             normHand.append(Cards.Pudding())
             for k in distribution:
                 print k
@@ -362,3 +378,5 @@ class SushiGoBoard:
 
 # SushiGo= SushiGoBoard([4,1], False)
 # SushiGo.normalDistribution()
+
+>>>>>>> 24c5308f5a487a19fb04d6e49ce83b13f9ef8f5a

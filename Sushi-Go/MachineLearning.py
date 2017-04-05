@@ -70,7 +70,6 @@ class Learner(Abstract):
         #print(diff)
         #print(priorityList)
         
-        self.board.append(cardFinal)
         self.pastMatchData.close()
         return cardFinal
 
