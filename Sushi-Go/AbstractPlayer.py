@@ -1,9 +1,10 @@
 import random
 from abc import ABCMeta, abstractmethod
+from Cards import Pudding
 
 class Abstract:
     __metaclass__ = ABCMeta
-    def __init__(self, playerNum, numPlayers, otherPlayers):
+    def __init__(self, playerNum, numPlayers):
         self.playerNum = playerNum
         self.round = 0
         self.score = 0
@@ -29,8 +30,9 @@ class Abstract:
         try:
             newBoard = []
             for card in self.board:
-                if type(card) == Nigiri:
+                if type(card) == Pudding:
                     newBoard.append(card)
+            self.board = newBoard
         except:
             self.board = []
-        self.board = newBoard
+        
