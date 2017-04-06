@@ -227,13 +227,9 @@ class SushiGoBoard:
             #     if k == 'Pudding':
             #         for j in range(distribution[k]):
             #             jankrandomarray.append(Cards.Pudding())
-            while (len(normHand) < self.handSize): # fill remaining cards based on pure probability
-                normHand.append(jankrandomarray.cards[random.randint(0,myHypoDeckSize-1)])
-
-
-
-    #                normHand.append(thisCard)
-
+            for n in range(self.handSize - len(normHand)): # fill remaining cards based on pure probability
+                if (self.handSize - len(normHand) != 0) :
+                    normHand.append(jankrandomarray.cards[random.randint(0,myHypoDeckSize-1)])
             #print normHand
             return normHand
 
