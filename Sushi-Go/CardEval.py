@@ -16,16 +16,23 @@ class CardEvaluator(Abstract):
     #     # self.prevHands[self.handTracker] = hand
 
     def move(self, game):
+        print self.hand
+        print len(self.hand)
         self.prevHands[self.handTracker] = copy.deepcopy(self.hand)
         temp = (self.hand[0], 0)
-        for cards in self.hand:
+        for cards in self.prevHands[self.handTracker]:
             if self.ScoreCard(cards) > temp[1]:
                 temp = (cards, self.ScoreCard(cards))
 
-        self.hand.remove(temp[0])
-        self.board.append(temp[0])
+        for i in self.hand:
+            if (i.cardType == temp[0].cardType):
+                self.hand.remove(i)
+                self.board.append(temp[0])
+                break
         self.prevHands[self.handTracker] = copy.deepcopy(self.hand)
         self.handTracker = (self.handTracker + 1) % self.numPlayers
+        print self.hand
+        print len(self.hand)
         return temp[0]
 
     def ScoreCard(self, card):
@@ -36,7 +43,13 @@ class CardEvaluator(Abstract):
             return self.game.scoreSingle(self.board+[card])-self.game.scoreSingle(self.board)
         elif (card.cardType == "Tempura"):
             tempPrevHands = copy.deepcopy(self.prevHands)
-            tempPrevHands[self.handTracker].remove(card)
+            # print tempPrevHands[self.handTracker]
+            # print card
+            for i in range(len(tempPrevHands[self.handTracker])):
+                if (tempPrevHands[self.handTracker][i].cardType == "Tempura"):
+                    tempPrevHands[self.handTracker].pop(i)
+                    break
+            # tempPrevHands[self.handTracker].remove(card)
             totalScore = 0
             for hand in tempPrevHands:
                 tempuraTracker = 0
@@ -46,7 +59,7 @@ class CardEvaluator(Abstract):
                 score = 2.5*tempuraTracker/(2*self.numPlayers-tempuraTracker)
                 if (score > 2.5):
                     score = 2.5
-                totalScore = (totalScore+score)/(1+totalScore*score/2.5^2)
+                totalScore = (totalScore+score)/(1+totalScore*score/2.5**2)
             return totalScore
         elif (card.cardType == "Sashimi"):
             pass
