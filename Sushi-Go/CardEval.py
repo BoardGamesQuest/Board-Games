@@ -24,16 +24,23 @@ class CardEvaluator(Abstract):
             if self.ScoreCard(cards) > temp[1]:
                 temp = (cards, self.ScoreCard(cards))
 
+#        for i in self.hand:
+#            if (i.cardType == temp[0].cardType):
+#                self.hand.remove(i)
+#                self.board.append(temp[0])
+#                break           
+#       self.prevHands[self.handTracker] = copy.deepcopy(self.hand)
+        for i in self.prevHands[self.handTracker]:
+            if (i.cardType == temp[0].cardType):
+                self.prevHands[self.handTracker].remove(i)
+                break
+        self.handTracker = (self.handTracker + 1) % self.numPlayers
+#        print self.hand
+#        print len(self.hand)
+#        return temp[0]
         for i in self.hand:
             if (i.cardType == temp[0].cardType):
-                self.hand.remove(i)
-                self.board.append(temp[0])
-                break
-        self.prevHands[self.handTracker] = copy.deepcopy(self.hand)
-        self.handTracker = (self.handTracker + 1) % self.numPlayers
-        print self.hand
-        print len(self.hand)
-        return temp[0]
+                return i
 
     def ScoreCard(self, card):
         # tempGame = copy.deepcopy(game)
