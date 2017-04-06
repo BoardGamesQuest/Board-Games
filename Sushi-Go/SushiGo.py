@@ -17,7 +17,8 @@ class SushiGoBoard:
     def __init__(self, numPlayers=4, maxRounds=3, debugMode=False):
         self.numPlayers, self.maxRounds, self.debugMode = numPlayers, maxRounds, debugMode
         self.handSize = 12 - self.numPlayers
-        self.setAgents(agents=CardEvaluator(0, numPlayers, self), numLearner=1)
+        self.setAgents()
+        self.generateDeck()
 
     def setAgents(self, agents=[], numHuman=0, numLearner=0):
         self.players = []
@@ -28,11 +29,11 @@ class SushiGoBoard:
         else:
             numCustom = 1
             self.players.append(agents)
-        for i in range(numCustom, numLearner):
+        for i in range(numCustom, numCustom + numLearner):
             self.players.append(Learner2(i, self.numPlayers, True))
-        for i in range(numCustom + numLearner, numLearner + numHuman):
+        for i in range(numCustom + numLearner, numCustom + numLearner + numHuman):
             self.players.append(Interactive(i, self.numPlayers))
-        for i in range(numCustom + numLearner + numHuman, self.numPlayers):
+        for i in range(numCustom + numLearner + numHuman, self.numPlayers + 1):
             self.players.append(Sample(i, self.numPlayers))
 
     def display(self):
@@ -64,7 +65,7 @@ class SushiGoBoard:
                 if type(card) == Cards.Nigiri:
                     boardScores[-1] += card.pointValue
         
-        print("Nigiri: " + str(boardScores))
+        #print("Nigiri: " + str(boardScores))
 
         return boardScores
 
@@ -77,7 +78,7 @@ class SushiGoBoard:
                     boardScores[-1] += 1
             boardScores[-1] =  np.floor(boardScores[-1]/3) * 10
 
-        print("Sashimi: " + str(boardScores))
+        #print("Sashimi: " + str(boardScores))
 
         return boardScores
 
@@ -96,7 +97,7 @@ class SushiGoBoard:
             else:
                 boardScores[-1] = 15
 
-        print("Dumpling: " + str(boardScores))
+        #print("Dumpling: " + str(boardScores))
 
         return boardScores
 
@@ -109,11 +110,12 @@ class SushiGoBoard:
                     if card.nigiri:
                         boardScores[-1] += (2*card.nigiriCard.pointValue) # only * 2 becuase we already evaluate the point value once when scoring nigiri
 
-        print("Wasabi: " + str(boardScores))
+        #print("Wasabi: " + str(boardScores))
 
         return boardScores
 
     def scoreTempura(self, boards):
+        # boardScores = [np.floor(len([True for card in board if card.cardType = 'Tempura'])/2)*5 for board in boards]
         boardScores = []
         for board in boards:
             boardScores.append(0)
@@ -121,62 +123,45 @@ class SushiGoBoard:
                 if type(card) == Cards.Tempura:
                     boardScores[-1] += 1
             boardScores[-1] =  np.floor(boardScores[-1]/2) * 5
-        print("Tempura: " + str(boardScores))
+        #print("Tempura: " + str(boardScores))
 # use IsInstance function
         return boardScores
 
     def scoreMaki(self, boards): # is there anything more eficient?
-        boardScores = []
-        for board in boards:
-            boardScores.append(0)
-            for card in board:
-                if type(card) == Cards.Maki:
-                    boardScores[-1] += card.size
-        sortScores = sorted(boardScores)
-        firsts = []
-        seconds = []
+        boardScores = [sum([card.size for card in board if card.cardType == 'Maki']) for board in boards]
+        sortScores = sorted(boardScores, reverse=True)
+        numFirsts = sortScores.count(sortScores[0])
+        secondsIndex = numFirsts
+        numSeconds = sortScores.count(sortScores[secondsIndex])
+        firstPoints = np.floor(6/numFirsts)
+        secondPoints = np.floor(3/numSeconds)
         for i in range(len(boardScores)):
-            if boardScores[i] == sortScores[-1]:
-                firsts.append(i)
-            elif boardScores[i] == sortScores[- (1+sortScores.count(sortScores[-1]))]:
-                seconds.append(i)
-        for i in range(len(boardScores)):
-            if i in firsts:
-                boardScores[i] = np.floor(6/(len(firsts)))
-            elif i in seconds:
-                boardScores[i] = np.floor(3/(len(seconds)))
+            if boardScores[i] == sortScores[0]:
+                boardScores[i] = firstPoints
+            elif boardScores[i] == sortScores[secondsIndex]:
+                boardScores[i] = secondPoints
             else:
                 boardScores[i] = 0
-
-        print("Maki: " + str(boardScores))
-
+        #print("Maki: " + str(boardScores))
         return boardScores
 
     def scorePudding(self, boards):
-        boardScores = []
-        for board in boards:
-            boardScores.append(0)
-            for card in board:
-                if type(card) == Cards.Pudding:
-                    boardScores[-1] += 1
-        sortScores = sorted(boardScores)
-        firsts = []
-        lasts = []
+        boardScores = [sum([card.size for card in board if card.cardType == 'Pudding']) for board in boards]
+        sortScores = sorted(boardScores, reverse=True)
+        numFirsts = sortScores.count(sortScores[0])
+        secondsIndex = numFirsts
+        numSeconds = sortScores.count(sortScores[secondsIndex])
+        firstPoints = np.floor(6/numFirsts)
+        secondPoints = -np.floor(6/numSeconds)
         for i in range(len(boardScores)):
-            if boardScores[i] == sortScores[-1]:
-                firsts.append(i)
-            elif boardScores[i] == sortScores[1]:
-                lasts.append(i)
-        for i in range(len(boardScores)):
-            if i in firsts:
-                boardScores[i] = np.floor(6/(len(firsts)))
-            elif i in lasts:
-                boardScores[i] = np.floor(-6/(len(lasts)))
+            if boardScores[i] == sortScores[0]:
+                boardScores[i] = firstPoints
+            elif boardScores[i] == sortScores[secondsIndex]:
+                boardScores[i] = secondPoints
             else:
                 boardScores[i] = 0
 
-        print("Pudding: " + str(boardScores))
-
+        #print("Pudding: " + str(boardScores))
         return boardScores
 
 
@@ -219,14 +204,14 @@ class SushiGoBoard:
                     print "Passing Hands. Next Turn."
 
     def printWinners(self, scores, roundNum=False):
-        sortedPlayers = sorted(self.players, key=lambda player: player.score)
+        sortedPlayers = sorted(self.players, key=lambda player: player.score, reverse=True)
         if type(roundNum) == int:
             print "Round " + str(roundNum+1) + ", Stop."
         print "Score Board:"
         for i in range(self.numPlayers):
-            sortedPlayers[i].place = self.numPlayers - i
+            sortedPlayers[i].place = i + 1 # What about ties?
             print "    Player " + str(i+1) + " Scored " + str(scores[i]) + " Points this round, for a total of " +str(self.players[i].score) + " Points."
-        print "Player " + str(sortedPlayers[-1].playerNum + 1) + " is in the lead"
+        print "Player " + str(sortedPlayers[0].playerNum + 1) + " is in the lead"
 
     def run(self):
         self.generateDeck()
@@ -243,7 +228,8 @@ class SushiGoBoard:
             for k in range(self.numPlayers):
                 self.players[k].score += scores[k]
             self.cleanup()
-            self.printWinners(scores, roundNum)
+            if self.debugMode:
+                self.printWinners(scores, roundNum)
         sortedPlayers = sorted(self.players, key=lambda player: player.score)
         winner = sortedPlayers[-1].playerNum
         return winner
@@ -255,8 +241,8 @@ class SushiGoBoard:
         winners = []
         for i in range(numGames):
             winners.append(self.run())
-        sortedPlayers = sorted(self.players, key=lambda player: player.score)
-        place = self.numPlayers - sortedPlayers.index(player)
+        sortedPlayers = sorted(self.players, key=lambda player: player.score, reverse=True)
+        place = sortedPlayers.index(player) + 1
         numWins = winners.count(0)
         self.debugMode = oldDebugMode
         print winners
@@ -266,9 +252,9 @@ class SushiGoBoard:
             jankrandomarray = []
             ODDdistribution = {}
             normHand = []
-            myHypoDeckSize = 190.0#len(self.deck)
+            myHypoDeckSize = len(self.deck.cards)
             for k,v in distribution.items(): #calculates normal distribution based on 'distribution' parameter
-                print k
+                #print k
                 if k == 'Maki':
                     ODDdistribution[k + '1'] = v/(3.0*myHypoDeckSize)
                     ODDdistribution[k + '2'] = v/(3.0*myHypoDeckSize)
@@ -279,10 +265,10 @@ class SushiGoBoard:
                     ODDdistribution[k + '3'] = v/(3.0*myHypoDeckSize)
                 else:
                     ODDdistribution[k] = v/myHypoDeckSize
-                    print ODDdistribution[k]
+                    #print ODDdistribution[k]
             for k in ODDdistribution.keys():
                 #if ((math.floor(ODDdistribution[k]*self.handSize)) != 0) : #the expected value for a single card being in the balanced hand
-                print k + str(ODDdistribution[k])
+                #print k + str(ODDdistribution[k])
                 for i in range(int(np.floor(ODDdistribution[k]*self.handSize))):
                     if k == 'Nigiri1': # we need a more efficient method
                             normHand.append(Cards.Nigiri(1))
@@ -307,7 +293,7 @@ class SushiGoBoard:
                     if k == 'Pudding':
                             normHand.append(Cards.Pudding())
             for k in distribution:
-                print k
+                #print k
                  # JANKYJANkJANK
                 if k == 'Nigiri': # we need a more efficient method
                     for j in range(distribution[k]/3):
@@ -341,7 +327,7 @@ class SushiGoBoard:
 
     #                normHand.append(thisCard)
 
-            print normHand
+            #print normHand
             return normHand
 
 # SushiGo= SushiGoBoard([4,1], False)
