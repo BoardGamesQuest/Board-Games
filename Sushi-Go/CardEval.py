@@ -39,7 +39,9 @@ class CardEvaluator(Abstract):
         # tempGame = copy.deepcopy(game)
         # tempBoard = copy.deepcopy(self.board)
         # tempBoard2 = copy.deepcopy(self.board).append(card)
-        if self.game.scoreSingle(self.board+[card])-self.game.scoreSingle(self.board)>0:
+        if (card.cardType == "Dumpling"):
+            return self.game.scoreSingle(self.board+[card])-self.game.scoreSingle(self.board)+0.01
+        elif self.game.scoreSingle(self.board+[card])-self.game.scoreSingle(self.board)>0:
             return self.game.scoreSingle(self.board+[card])-self.game.scoreSingle(self.board)
         elif (card.cardType == "Tempura"):
             tempPrevHands = copy.deepcopy(self.prevHands)
