@@ -26,20 +26,14 @@ class CardEvaluator(Abstract):
     #     # self.prevHands[self.handTracker] = hand
 
     def move(self, game):
-        print self.hand
-        print len(self.hand)
+        # print self.hand
+        # print len(self.hand)
         self.prevHands[self.handTracker] = replicate(self.hand)
         temp = (self.hand[0], 0)
         for cards in self.prevHands[self.handTracker]:
             if self.ScoreCard(cards) > temp[1]:
                 temp = (cards, self.ScoreCard(cards))
 
-#        for i in self.hand:
-#            if (i.cardType == temp[0].cardType):
-#                self.hand.remove(i)
-#                self.board.append(temp[0])
-#                break           
-#       self.prevHands[self.handTracker] = copy.deepcopy(self.hand)
         for i in self.prevHands[self.handTracker]:
             if (i.cardType == temp[0].cardType):
                 self.prevHands[self.handTracker].remove(i)
@@ -169,7 +163,7 @@ class CardEvaluator(Abstract):
             if ( puddVals[self.playerNum] > max(withoutSelf) ):
                 return 0
             else:
-                thing = 2+max(withoutSelf)-puddVals[self.playerNum]-int(tempCard.cardType[-1])
+                thing = 2+max(withoutSelf)-puddVals[self.playerNum]-int(card.cardType[-1])
                 if (thing == 0):
                     thing = .9
                 if (thing == -1):

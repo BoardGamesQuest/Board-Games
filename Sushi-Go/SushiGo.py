@@ -145,7 +145,6 @@ class SushiGoBoard:
         for i in range(numGames):
             winners.append(self.run())
             scores.append([player.score for player in self.players])
-            print (i)
         absoluteScores = np.sum(scores, axis=0)
         print absoluteScores
         # print scores
