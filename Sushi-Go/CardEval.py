@@ -108,3 +108,53 @@ class CardEvaluator(Abstract):
                         score = 5
                     totalScore = (totalScore+score)/(1+totalScore*score/5**2)
                 return totalScore
+        elif (card.cardType == "Pudding"):
+            tempPrevHands = copy.deepcopy(self.prevHands)
+            puddingCounter = -1
+            for hand in tempPrevHands:
+                for tempCard in hand:
+                    if (tempCard.cardType == "Pudding"):
+                        puddingCounter += 1
+            puddVals = []
+            for i in range(len(self.game.players)):
+                pudd = 0
+                for c in self.game.players[i].board:
+                    if (c.cardType == "Pudding"):
+                        pudd += 1
+                puddVals.append(pudd)
+            withoutSelf = copy.deepcopy(puddVals)
+            withoutSelf.pop(self.playerNum)
+            if ( puddVals[self.playerNum] > max(withoutSelf) ):
+                return 0
+            elif ( puddVals[self.playerNum] <= max(withoutSelf) and puddVals[self.playerNum] >= min(withoutSelf)):
+                return ((4+puddingCounter)/(puddingCounter+1))/(max(withoutSelf)-puddVals[self.playerNum]+1)
+            elif (puddVals[self.playerNum] < min(withoutSelf)):
+                return ((4+puddingCounter)/(puddingCounter+1))/(min(withoutSelf)-puddVals[self.playerNum]+1)
+
+
+
+        elif (card.cardType[:4] == "Maki"):
+            tempPrevHands = copy.deepcopy(self.prevHands)
+            puddingCounter = -1*int(card.cardType[-1])
+            for hand in tempPrevHands:
+                for tempCard in hand:
+                    if (tempCard.cardType[:4] == "Maki"):
+                        puddingCounter += int(tempCard.cardType[-1])
+            puddVals = []
+            for i in range(len(self.game.players)):
+                pudd = 0
+                for c in self.game.players[i].board:
+                    if (c.cardType[:4] == "Maki"):
+                        pudd += int(c.cardType[-1])
+                puddVals.append(pudd)
+            withoutSelf = copy.deepcopy(puddVals)
+            withoutSelf.pop(self.playerNum)
+            if ( puddVals[self.playerNum] > max(withoutSelf) ):
+                return 0
+            else:
+                thing = 2+max(withoutSelf)-puddVals[self.playerNum]-int(tempCard.cardType[-1])
+                if (thing == 0):
+                    thing = .95
+                if (thing == -1):
+                    thing = .9
+                return ((6+puddingCounter)/(puddingCounter+1))/thing
