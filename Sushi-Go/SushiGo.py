@@ -12,7 +12,7 @@ from Human import Interactive
 from CardEval import CardEvaluator
 import math
 
-distribution = {'Nigiri': 30, 'Wasabi': 10, 'Maki': 30, 'Dumpling': 30, 'Tempura': 30, 'Sashimi': 30, 'Pudding': 30}# someone needs to find the actuall distribution for cards
+distribution = {'Nigiri': 5, 'Wasabi': 0, 'Maki': 2, 'Dumpling': 14, 'Tempura': 14, 'Sashimi': 14, 'Pudding': 10}# someone needs to find the actuall distribution for cards
 
 class SushiGoBoard:
     def __init__(self, numPlayers=4, maxRounds=3, debugMode=False):
@@ -74,6 +74,7 @@ class SushiGoBoard:
         self.generateDeck()
         for player in self.players:
             player.score = 0
+            player.round = 0
 
     def setup(self):
         for player in self.players:
@@ -144,6 +145,7 @@ class SushiGoBoard:
         for i in range(numGames):
             winners.append(self.run())
             scores.append([player.score for player in self.players])
+            print (i)
         absoluteScores = np.sum(scores, axis=0)
         print absoluteScores
         # print scores

@@ -13,7 +13,7 @@ game.setAgents(numLearner=1)
 # game.setAgents(agents=cardEval, numLearner=1)
 
 game.run()
-agent = Sample(0, game.numPlayers)
+agent = Learner2(0, game.numPlayers)
 # game.setAgents(agents=agent)
 
 

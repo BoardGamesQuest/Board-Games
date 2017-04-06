@@ -8,8 +8,9 @@ class Deck:
     def generate(self, distribution):
         for cardType in distribution:
             if cardType == 'Nigiri': # we need a more efficient method
-                for i in range(distribution[cardType]/3):
+                for i in range(distribution[cardType]):
                     self.cards.append(Cards.Nigiri(1))
+                    self.cards.append(Cards.Nigiri(2))
                     self.cards.append(Cards.Nigiri(2))
                     self.cards.append(Cards.Nigiri(3))
             if cardType == 'Wasabi':
@@ -25,9 +26,19 @@ class Deck:
                 for i in range(distribution[cardType]):
                     self.cards.append(Cards.Tempura())
             if cardType == 'Maki':
-                for i in range(distribution[cardType]/3):
+                for i in range(distribution[cardType]):
+                    self.cards.append(Cards.Maki(1))
+                    self.cards.append(Cards.Maki(1))
                     self.cards.append(Cards.Maki(1))
                     self.cards.append(Cards.Maki(2))
+                    self.cards.append(Cards.Maki(2))
+                    self.cards.append(Cards.Maki(2))
+                    self.cards.append(Cards.Maki(2))
+                    self.cards.append(Cards.Maki(2))
+                    self.cards.append(Cards.Maki(2))
+                    self.cards.append(Cards.Maki(3))
+                    self.cards.append(Cards.Maki(3))
+                    self.cards.append(Cards.Maki(3))
                     self.cards.append(Cards.Maki(3))
             if cardType == 'Pudding':
                 for i in range(distribution[cardType]):
