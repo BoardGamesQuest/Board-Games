@@ -1,6 +1,16 @@
 from AbstractPlayer import Abstract
 import copy
 
+def replicate(inp): #copy doesn't really work for maintaining the same instance of objects, but this will (JANK)
+    if type(inp) != list:
+        new = [inp] + [0]
+        new.pop()
+        new = new[0]
+    else:
+        new = inp + [0]
+        new.pop()
+    return new
+
 class CardEvaluator(Abstract):
     def __init__(self, playerNum, numPlayers, game):
         super(CardEvaluator, self).__init__(playerNum, numPlayers)
@@ -18,7 +28,7 @@ class CardEvaluator(Abstract):
     def move(self, game):
         print self.hand
         print len(self.hand)
-        self.prevHands[self.handTracker] = copy.deepcopy(self.hand)
+        self.prevHands[self.handTracker] = replicate(self.hand)
         temp = (self.hand[0], 0)
         for cards in self.prevHands[self.handTracker]:
             if self.ScoreCard(cards) > temp[1]:
@@ -29,7 +39,6 @@ class CardEvaluator(Abstract):
                 self.hand.remove(i)
                 self.board.append(temp[0])
                 break
-        self.prevHands[self.handTracker] = copy.deepcopy(self.hand)
         self.handTracker = (self.handTracker + 1) % self.numPlayers
         print self.hand
         print len(self.hand)
