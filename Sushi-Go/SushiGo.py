@@ -3,6 +3,7 @@ import random
 import numpy as np
 from Deck import *
 from Cards import *
+from scoring import *
 #import the players/algorithms here
 from SamplePlayer import Sample
 from SamplePlayer2 import Sample2
@@ -35,7 +36,7 @@ class SushiGoBoard:
             self.players.append(Learner2(i, self.numPlayers, True))
         for i in range(numCustom + numLearner, numCustom + numLearner + numHuman):
             self.players.append(Interactive(i, self.numPlayers))
-        for i in range(numCustom + numLearner + numHuman, self.numPlayers + 1):
+        for i in range(numCustom + numLearner + numHuman, self.numPlayers):
             self.players.append(Sample(i, self.numPlayers))
 
     def display(self):
@@ -58,124 +59,15 @@ class SushiGoBoard:
             self.hands[i] = self.hands[i+1]
         self.hands[-1] = firstHand
 
-    def scoreNigiri(self, boards):
-        boardScores = []
-        for board in boards:
-            boardScores.append(0)
-            for card in board:
-                if type(card) == Cards.Nigiri:
-                    boardScores[-1] += card.pointValue
-        
-        #print("Nigiri: " + str(boardScores))
-
-        return boardScores
-
-    def scoreSashimi(self, boards):
-        boardScores = []
-        for board in boards:
-            boardScores.append(0)
-            for card in board:
-                if type(card) == Cards.Sashimi:
-                    boardScores[-1] += 1
-            boardScores[-1] =  np.floor(boardScores[-1]/3) * 10
-
-        #print("Sashimi: " + str(boardScores))
-
-        return boardScores
-
-    def scoreDumpling(self, boards):
-        boardScores = []
-        for board in boards:
-            boardScores.append(0)
-            for card in board:
-                if type(card) == Cards.Dumpling:
-                    boardScores[-1] += 1
-            score = 0
-            if (boardScores[-1] < 5):
-                for i in range(boardScores[-1]): # there might be something more efficient
-                    score += i
-                boardScores[-1] = score
-            else:
-                boardScores[-1] = 15
-
-        #print("Dumpling: " + str(boardScores))
-
-        return boardScores
-
-    def scoreWasabi(self, boards):
-        boardScores = []
-        for board in boards:
-            boardScores.append(0)
-            for card in board:
-                if type(card) == Cards.Wasabi:
-                    if card.nigiri:
-                        boardScores[-1] += (2*card.nigiriCard.pointValue) # only * 2 becuase we already evaluate the point value once when scoring nigiri
-
-        #print("Wasabi: " + str(boardScores))
-
-        return boardScores
-
-    def scoreTempura(self, boards):
-        # boardScores = [np.floor(len([True for card in board if card.cardType = 'Tempura'])/2)*5 for board in boards]
-        boardScores = []
-        for board in boards:
-            boardScores.append(0)
-            for card in board:
-                if type(card) == Cards.Tempura:
-                    boardScores[-1] += 1
-            boardScores[-1] =  np.floor(boardScores[-1]/2) * 5
-        #print("Tempura: " + str(boardScores))
-# use IsInstance function
-        return boardScores
-
-    def scoreMaki(self, boards): # is there anything more eficient?
-        boardScores = [sum([card.size for card in board if card.cardType == 'Maki']) for board in boards]
-        sortScores = sorted(boardScores, reverse=True)
-        numFirsts = sortScores.count(sortScores[0])
-        secondsIndex = numFirsts
-        numSeconds = sortScores.count(sortScores[secondsIndex])
-        firstPoints = np.floor(6/numFirsts)
-        secondPoints = np.floor(3/numSeconds)
-        for i in range(len(boardScores)):
-            if boardScores[i] == sortScores[0]:
-                boardScores[i] = firstPoints
-            elif boardScores[i] == sortScores[secondsIndex]:
-                boardScores[i] = secondPoints
-            else:
-                boardScores[i] = 0
-        #print("Maki: " + str(boardScores))
-        return boardScores
-
-    def scorePudding(self, boards):
-        boardScores = [sum([card.size for card in board if card.cardType == 'Pudding']) for board in boards]
-        sortScores = sorted(boardScores, reverse=True)
-        numFirsts = sortScores.count(sortScores[0])
-        secondsIndex = numFirsts
-        numSeconds = sortScores.count(sortScores[secondsIndex])
-        firstPoints = np.floor(6/numFirsts)
-        secondPoints = -np.floor(6/numSeconds)
-        for i in range(len(boardScores)):
-            if boardScores[i] == sortScores[0]:
-                boardScores[i] = firstPoints
-            elif boardScores[i] == sortScores[secondsIndex]:
-                boardScores[i] = secondPoints
-            else:
-                boardScores[i] = 0
-
-        #print("Pudding: " + str(boardScores))
-        return boardScores
-
-
-
     def score(self, lastRound=False):
-        scores = np.array([self.scoreNigiri(self.boards), self.scoreSashimi(self.boards), self.scoreDumpling(self.boards), self.scoreWasabi(self.boards), self.scoreTempura(self.boards), self.scoreMaki(self.boards)])
+        scores = np.array([scoreNigiri(self.boards), scoreSashimi(self.boards), scoreDumpling(self.boards), scoreWasabi(self.boards), scoreTempura(self.boards), scoreMaki(self.boards)])
         if lastRound:
-            scores = np.append(scores, np.array([self.scorePudding(self.boards)]), axis=0)
-        self.scores = np.sum(scores, axis=0)
-        return self.scores
+            scores = np.append(scores, np.array([scorePudding(self.boards)]), axis=0)
+        scores = np.sum(scores, axis=0)
+        return scores
 
     def scoreSingle(self, Board):
-        Score = self.scoreNigiri([Board])[0] + self.scoreSashimi([Board])[0] + self.scoreDumpling([Board])[0] + self.scoreWasabi([Board])[0] + self.scoreTempura([Board])[0]
+        Score = self.scoreNigiri([Board])[0] + scoreSashimi([Board])[0] + scoreDumpling([Board])[0] + scoreWasabi([Board])[0] + scoreTempura([Board])[0]
         return Score
 
     def setup(self):
@@ -248,7 +140,6 @@ class SushiGoBoard:
         place = sortedPlayers.index(player) + 1
         numWins = winners.count(0)
         self.debugMode = oldDebugMode
-        print winners
         return np.divide(numWins, numGames), place
 
     def normalDistribution(self):
@@ -335,3 +226,6 @@ class SushiGoBoard:
 
 # SushiGo= SushiGoBoard([4,1], False)
 # SushiGo.normalDistribution()
+
+
+
