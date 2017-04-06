@@ -67,7 +67,7 @@ class SushiGoBoard:
         return scores
 
     def scoreSingle(self, Board):
-        Score = self.scoreNigiri([Board])[0] + scoreSashimi([Board])[0] + scoreDumpling([Board])[0] + scoreWasabi([Board])[0] + scoreTempura([Board])[0]
+        Score = scoreNigiri([Board])[0] + scoreSashimi([Board])[0] + scoreDumpling([Board])[0] + scoreWasabi([Board])[0] + scoreTempura([Board])[0]
         return Score
 
     def setup(self):
@@ -105,7 +105,7 @@ class SushiGoBoard:
             print "    Player " + str(i+1) + " Scored " + str(scores[i]) + " Points this round, for a total of " +str(self.players[i].score) + " Points."
         print "Player " + str(sortedPlayers[0].playerNum + 1) + " is in the lead"
 
-    def run(self):
+    def run(self, withScores=False):
         self.generateDeck()
         winners = []
         for roundNum in range(self.maxRounds):
@@ -127,17 +127,21 @@ class SushiGoBoard:
         return winner
 
     def test(self, player, numGames=100):
-        self.setAgents(agents=player)
+        print "TESTING"
+        oldAgents = copy.deepcopy(self.players)
         oldDebugMode = copy.copy(self.debugMode)
         self.debugMode = False
-        winners = []
+        winners, scores = [], []
+        self.setAgents(agents=player)
         for i in range(numGames):
             winners.append(self.run())
-        sortedPlayers = sorted(self.players, key=lambda player: player.score, reverse=True)
-        place = sortedPlayers.index(player) + 1
+            scores.append([player.score for player in self.players])
+        absoluteScores = np.sum(scores, axis=0)
+        print absoluteScores
         numWins = winners.count(0)
         self.debugMode = oldDebugMode
-        return np.divide(numWins, numGames), place
+        self.setAgents(agents=oldAgents)
+        return np.true_divide(numWins, numGames), winners
 
     def normalDistribution(self):
             jankrandomarray = []

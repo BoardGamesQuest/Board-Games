@@ -7,8 +7,8 @@ def scoreNigiri(boards):
         for card in board:
             if card.cardType == 'Nigiri':
                 boardScores[-1] += card.pointValue
-    
-    print("Nigiri: " + str(boardScores))
+                
+    # print("Nigiri: " + str(boardScores))
 
     return boardScores
 
@@ -21,7 +21,7 @@ def scoreSashimi(boards):
                 boardScores[-1] += 1
         boardScores[-1] =  np.floor(boardScores[-1]/3) * 10
 
-    print("Sashimi: " + str(boardScores))
+    # print("Sashimi: " + str(boardScores))
 
     return boardScores
 
@@ -40,7 +40,7 @@ def scoreDumpling(boards):
         else:
             boardScores[-1] = 15
 
-    print("Dumpling: " + str(boardScores))
+    # print("Dumpling: " + str(boardScores))
 
     return boardScores
 
@@ -53,7 +53,7 @@ def scoreWasabi(boards):
                 if card.nigiri:
                     boardScores[-1] += (2*card.nigiriCard.pointValue) # only * 2 becuase we already evaluate the point value once when scoring nigiri
 
-    print("Wasabi: " + str(boardScores))
+    # print("Wasabi: " + str(boardScores))
 
     return boardScores
 
@@ -65,7 +65,7 @@ def scoreTempura(boards):
             if card.cardType == 'Tempura':
                 boardScores[-1] += 1
         boardScores[-1] =  np.floor(boardScores[-1]/2) * 5
-    print("Tempura: " + str(boardScores))
+    # print("Tempura: " + str(boardScores))
 # use IsInstance function
     return boardScores
 
@@ -92,7 +92,7 @@ def scoreMaki(boards): # is there anything more eficient?
         else:
             boardScores[i] = 0
 
-    print("Maki: " + str(boardScores))
+    # print("Maki: " + str(boardScores))
 
     return boardScores
 
@@ -119,6 +119,6 @@ def scorePudding(boards):
         else:
             boardScores[i] = 0
 
-    print("Pudding: " + str(boardScores))
+    # print("Pudding: " + str(boardScores))
 
     return boardScores
