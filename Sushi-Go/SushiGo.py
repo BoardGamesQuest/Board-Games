@@ -29,9 +29,9 @@ class SushiGoBoard:
         else:
             numCustom = 1
             self.players.append(agents)
-        for i in range(numCustom, numLearner):
+        for i in range(numCustom, numCustom + numLearner):
             self.players.append(Learner2(i, self.numPlayers, True))
-        for i in range(numCustom + numLearner, numLearner + numHuman):
+        for i in range(numCustom + numLearner, numCustom + numLearner + numHuman):
             self.players.append(Interactive(i, self.numPlayers))
         for i in range(numCustom + numLearner + numHuman, self.numPlayers):
             self.players.append(Sample(i, self.numPlayers))
@@ -128,7 +128,7 @@ class SushiGoBoard:
         return boardScores
 
     def scoreMaki(self, boards): # is there anything more eficient?
-        boardScores = [sum([card.size for card in board if card.cardType = 'Maki']) for board in boards]
+        boardScores = [sum([card.size for card in board if card.cardType == 'Maki']) for board in boards]
         sortScores = sorted(boardScores, reverse=True)
         numFirsts = sortScores.count(sortScores[0])
         secondsIndex = numFirsts
@@ -147,7 +147,7 @@ class SushiGoBoard:
         return boardScores
 
     def scorePudding(self, boards):
-        boardScores = [sum([card.size for card in board if card.cardType = 'Pudding']) for board in boards]
+        boardScores = [sum([card.size for card in board if card.cardType == 'Pudding']) for board in boards]
         sortScores = sorted(boardScores, reverse=True)
         numFirsts = sortScores.count(sortScores[0])
         secondsIndex = numFirsts
@@ -228,16 +228,10 @@ class SushiGoBoard:
             for k in range(self.numPlayers):
                 self.players[k].score += scores[k]
             self.cleanup()
-<<<<<<< HEAD
             if self.debugMode:
                 self.printWinners(scores, roundNum)
         sortedPlayers = sorted(self.players, key=lambda player: player.score, reverse=True)
         winner = sortedPlayers[0].playerNum
-=======
-            self.printWinners(scores, roundNum)
-        sortedPlayers = sorted(self.players, key=lambda player: player.score)
-        winner = sortedPlayers[-1].playerNum
->>>>>>> 349671fc798323b0f26530e29f7cef9ffba6ad2d
         return winner
 
     def test(self, player, numGames=100):
