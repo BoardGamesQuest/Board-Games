@@ -8,11 +8,11 @@ class Learner(Abstract):
         self.currentRound = self.round
         self.pastScore = 0
         self.collectingData = collectingData
-        
+
     def move(self, game):
         if self.collectingData:
-            cardFinal = self.hand.pop(0)
-            self.board.append(cardFinal)
+            cardFinal = self.hand[0]
+            #self.board.append(cardFinal)
             return cardFinal
         #print(self.hand)
         self.pastMatchData = shelve.open('PastMatchData') #this algorithm will try to match the Ideal composition of cards based on passed match data.
@@ -63,13 +63,13 @@ class Learner(Abstract):
                 #print("removing card: " + str(cardFinal))
                 self.hand.remove(cardFinal)
                 break
-            
-            
+
+
         #print(target)
         #print(boardPercentage)
         #print(diff)
         #print(priorityList)
-        
+
         self.pastMatchData.close()
         return cardFinal
 
@@ -157,12 +157,11 @@ class Learner(Abstract):
 
 
                 # need to find a way to scale the percentages such that afterwards, the avarage or so still adds up to 100
-                
-                
+
+
 
     def reset(self):
         self.pastMatchData = shelve.open('PastMatchData')
         for key in self.pastMatchData.keys():
             del self.pastMatchData[key]
         self.pastMatchData.close()
-

@@ -7,5 +7,5 @@ class Sample(Abstract):
         self.pastScore = 0
 
     def move(self, game):
-        card = self.hand.pop(0)
+        card = self.hand[0]
         return card # returns card if the game needs it

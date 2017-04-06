@@ -28,8 +28,7 @@ class Interactive(Abstract):
             else:
                 print("You did not enter a valid index")
 
-        card = self.hand.pop(cardIndex)
+        card = self.hand[cardIndex]
         print(card.cardType)
-        self.board.append(card)
+    #    self.board.append(card)
         return card
-        
