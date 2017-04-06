@@ -36,7 +36,7 @@ class CardEvaluator(Abstract):
             return self.game.scoreSingle(self.board+[card])-self.game.scoreSingle(self.board)
         elif (card.cardType == "Tempura"):
             tempPrevHands = copy.deepcopy(self.prevHands)
-            tempPrevHands[self.handTracker-1].remove(card)
+            tempPrevHands[self.handTracker].remove(card)
             totalScore = 0
             for hand in tempprevHands:
                 tempuraTracker = 0
