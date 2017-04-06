@@ -18,6 +18,7 @@ class SushiGoBoard:
         self.numPlayers, self.maxRounds, self.debugMode = numPlayers, maxRounds, debugMode
         self.handSize = 12 - self.numPlayers
         self.setAgents()
+        self.generateDeck()
 
     def setAgents(self, agents=[], numHuman=0, numLearner=0):
         self.players = []
@@ -32,7 +33,7 @@ class SushiGoBoard:
             self.players.append(Learner2(i, self.numPlayers, True))
         for i in range(numCustom + numLearner, numLearner + numHuman):
             self.players.append(Interactive(i, self.numPlayers))
-        for i in range(numCustom + numLearner + numHuman, self.numPlayers):
+        for i in range(numCustom + numLearner + numHuman, self.numPlayers + 1):
             self.players.append(Sample(i, self.numPlayers))
 
     def display(self):
@@ -64,7 +65,7 @@ class SushiGoBoard:
                 if type(card) == Cards.Nigiri:
                     boardScores[-1] += card.pointValue
         
-        print("Nigiri: " + str(boardScores))
+        #print("Nigiri: " + str(boardScores))
 
         return boardScores
 
@@ -77,7 +78,7 @@ class SushiGoBoard:
                     boardScores[-1] += 1
             boardScores[-1] =  np.floor(boardScores[-1]/3) * 10
 
-        print("Sashimi: " + str(boardScores))
+        #print("Sashimi: " + str(boardScores))
 
         return boardScores
 
@@ -96,7 +97,7 @@ class SushiGoBoard:
             else:
                 boardScores[-1] = 15
 
-        print("Dumpling: " + str(boardScores))
+        #print("Dumpling: " + str(boardScores))
 
         return boardScores
 
@@ -109,7 +110,7 @@ class SushiGoBoard:
                     if card.nigiri:
                         boardScores[-1] += (2*card.nigiriCard.pointValue) # only * 2 becuase we already evaluate the point value once when scoring nigiri
 
-        print("Wasabi: " + str(boardScores))
+        #print("Wasabi: " + str(boardScores))
 
         return boardScores
 
@@ -121,7 +122,7 @@ class SushiGoBoard:
                 if type(card) == Cards.Tempura:
                     boardScores[-1] += 1
             boardScores[-1] =  np.floor(boardScores[-1]/2) * 5
-        print("Tempura: " + str(boardScores))
+        #print("Tempura: " + str(boardScores))
 # use IsInstance function
         return boardScores
 
@@ -148,7 +149,7 @@ class SushiGoBoard:
             else:
                 boardScores[i] = 0
 
-        print("Maki: " + str(boardScores))
+        #print("Maki: " + str(boardScores))
 
         return boardScores
 
@@ -175,7 +176,7 @@ class SushiGoBoard:
             else:
                 boardScores[i] = 0
 
-        print("Pudding: " + str(boardScores))
+        #print("Pudding: " + str(boardScores))
 
         return boardScores
 
@@ -267,9 +268,9 @@ class SushiGoBoard:
             jankrandomarray = []
             ODDdistribution = {}
             normHand = []
-            myHypoDeckSize = 190.0#len(self.deck)
+            myHypoDeckSize = len(self.deck.cards)
             for k,v in distribution.items(): #calculates normal distribution based on 'distribution' parameter
-                print k
+                #print k
                 if k == 'Maki':
                     ODDdistribution[k + '1'] = v/(3.0*myHypoDeckSize)
                     ODDdistribution[k + '2'] = v/(3.0*myHypoDeckSize)
@@ -280,10 +281,10 @@ class SushiGoBoard:
                     ODDdistribution[k + '3'] = v/(3.0*myHypoDeckSize)
                 else:
                     ODDdistribution[k] = v/myHypoDeckSize
-                    print ODDdistribution[k]
+                    #print ODDdistribution[k]
             for k in ODDdistribution.keys():
                 #if ((math.floor(ODDdistribution[k]*self.handSize)) != 0) : #the expected value for a single card being in the balanced hand
-                print k + str(ODDdistribution[k])
+                #print k + str(ODDdistribution[k])
                 for i in range(int(np.floor(ODDdistribution[k]*self.handSize))):
                     if k == 'Nigiri1': # we need a more efficient method
                             normHand.append(Cards.Nigiri(1))
@@ -308,7 +309,7 @@ class SushiGoBoard:
                     if k == 'Pudding':
                             normHand.append(Cards.Pudding())
             for k in distribution:
-                print k
+                #print k
                  # JANKYJANkJANK
                 if k == 'Nigiri': # we need a more efficient method
                     for j in range(distribution[k]/3):
@@ -342,7 +343,7 @@ class SushiGoBoard:
 
     #                normHand.append(thisCard)
 
-            print normHand
+            #print normHand
             return normHand
 
 # SushiGo= SushiGoBoard([4,1], False)
