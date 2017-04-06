@@ -154,7 +154,7 @@ class CardEvaluator(Abstract):
             else:
                 thing = 2+max(withoutSelf)-puddVals[self.playerNum]-int(tempCard.cardType[-1])
                 if (thing == 0):
-                    thing = .95
-                if (thing == -1):
                     thing = .9
+                if (thing == -1):
+                    thing = .8
                 return ((6+puddingCounter)/(puddingCounter+1))/thing
