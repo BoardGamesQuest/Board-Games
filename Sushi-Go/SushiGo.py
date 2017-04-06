@@ -17,7 +17,9 @@ class SushiGoBoard:
     def __init__(self, numPlayers=4, maxRounds=3, debugMode=False):
         self.numPlayers, self.maxRounds, self.debugMode = numPlayers, maxRounds, debugMode
         self.handSize = 12 - self.numPlayers
+        self.round = 0
         self.setAgents()
+        self.boards, self.hands = [[] for i in range(self.numPlayers)], [[] for i in range(self.numPlayers)]
 
     def setAgents(self, agents=[], numHuman=0, numLearner=0):
         self.players = []
@@ -47,14 +49,13 @@ class SushiGoBoard:
         self.deck.shuffle()
 
     def dealHands(self):
-        for player in self.players:
-            player.takeHand(self.deck.getHand(self.handSize))
+        self.hands = [self.deck.getHand(self.handSize) for i in range(self.numPlayers)]
 
     def passHands(self):
-        firstHand = copy.deepcopy(self.players[0].hand)
+        firstHand = copy.deepcopy(self.hands[0])
         for i in range(self.numPlayers-1):
-            self.players[i].takeHand(self.players[i+1].hand)
-        self.players[-1].takeHand(firstHand)
+            self.hands[i] = self.hands[i+1]
+        self.hands[-1] = firstHand
 
     def scoreNigiri(self, boards):
         boardScores = []
@@ -166,21 +167,21 @@ class SushiGoBoard:
 
 
     def score(self, lastRound=False):
-        boards = [player.board for player in self.players]
-        scores = np.array([self.scoreNigiri(boards), self.scoreSashimi(boards), self.scoreDumpling(boards), self.scoreWasabi(boards), self.scoreTempura(boards), self.scoreMaki(boards)])
+        scores = np.array([self.scoreNigiri(self.boards), self.scoreSashimi(self.boards), self.scoreDumpling(self.boards), self.scoreWasabi(self.boards), self.scoreTempura(self.boards), self.scoreMaki(self.boards)])
         if lastRound:
-            scores = np.append(scores, np.array([self.scorePudding(boards)]), axis=0)
-        scores = np.sum(scores, axis=0)
-        return scores
+            scores = np.append(scores, np.array([self.scorePudding(self.boards)]), axis=0)
+        self.scores = np.sum(scores, axis=0)
+        return self.scores
 
     def scoreSingle(self, Board):
         Score = self.scoreNigiri([Board])[0] + self.scoreSashimi([Board])[0] + self.scoreDumpling([Board])[0] + self.scoreWasabi([Board])[0] + self.scoreTempura([Board])[0]
         return Score
 
     def setup(self):
-        for player in self.players:
-            player.round += 1
-            player.setup()
+        for i in range(self.numPlayers):
+            self.players[i].board = self.boards[i]
+            self.players[i].round = self.round
+            self.players[i].setup()
         #put any other code here to setup the cycle
 
     def cleanup(self):
@@ -190,11 +191,13 @@ class SushiGoBoard:
 
     def cycle(self): # think of a better name, but round is already defined in python
         self.dealHands()
-        hands = []
         for turn in range(self.handSize):
             for i in range(self.numPlayers):
+                self.players[i].takeHand(self.hands[i])
                 move = self.players[i].move(self)
-                self.players[i].board.append(move)
+                self.hands[i].remove(move) # Should error out if player sketchily gave a card they didn't have
+                self.boards[i].append(move)
+                self.players[i].board = self.boards[i]
                 if self.debugMode:
                     print "Player " + str(i+1) + " played a " + move.cardType + "."
             if turn != self.handSize - 1:
@@ -229,13 +232,10 @@ class SushiGoBoard:
             self.cleanup()
             if self.debugMode:
                 self.printWinners(scores, roundNum)
-<<<<<<< HEAD
         sortedPlayers = sorted(self.players, key=lambda player: player.score, reverse=True)
         winner = sortedPlayers[0].playerNum
-=======
         sortedPlayers = sorted(self.players, key=lambda player: player.score)
         winner = sortedPlayers[-1].playerNum
->>>>>>> 6d9b18429676f61539ac281e194a8b8d6dbf1c6b
         return winner
 
     def test(self, player, numGames=100):
