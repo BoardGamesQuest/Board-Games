@@ -8,7 +8,7 @@ from SamplePlayer import Sample
 from SamplePlayer2 import Sample2
 from MachineLearning2 import Learner2
 from Human import Interactive
-#from CardEval import CardEvaluator
+from CardEval import CardEvaluator
 import math
 
 distribution = {'Nigiri': 30, 'Wasabi': 10, 'Maki': 30, 'Dumpling': 30, 'Tempura': 30, 'Sashimi': 30, 'Pudding': 30}# someone needs to find the actuall distribution for cards
@@ -17,7 +17,7 @@ class SushiGoBoard:
     def __init__(self, numPlayers=4, maxRounds=3, debugMode=False):
         self.numPlayers, self.maxRounds, self.debugMode = numPlayers, maxRounds, debugMode
         self.handSize = 12 - self.numPlayers
-        self.setAgents(numLearner=1)
+        self.setAgents(agents=CardEvaluator(0, numPlayers, self), numLearner=1)
 
     def setAgents(self, agents=[], numHuman=0, numLearner=0):
         self.players = []

@@ -3,22 +3,24 @@ import copy
 
 class CardEvaluator(Abstract):
     def __init__(self, playerNum, numPlayers, game):
-        super(CardEvaluator, self).__init__(playerNum, numPlayers, game)
+        super(CardEvaluator, self).__init__(playerNum, numPlayers)
         self.pastScore = 0
+        self.game = game
+        self.prevHands = []
         for i in range(numPlayers):
-            self.prevHands[i] = self.game.normalDistribution()
+            self.prevHands.append(self.game.normalDistribution())
         self.handTracker = 0
 
     # def takeHand(self, hand):
     #     super(CardEvaluatior, self).takeHand(self, hand)
     #     # self.prevHands[self.handTracker] = hand
 
-    def move(self):
+    def move(self, game):
         self.prevHands[self.handTracker] = copy.deepcopy(self.hand)
         temp = (self.hand[0], 0)
         for cards in self.hand:
-            if self.ScoreCard(game, cards) > temp[1]:
-                temp = (cards, self.ScoreCard(game, cards))
+            if self.ScoreCard(cards) > temp[1]:
+                temp = (cards, self.ScoreCard(cards))
 
         self.hand.remove(temp[0])
         self.board.append(temp[0])
@@ -34,16 +36,17 @@ class CardEvaluator(Abstract):
             return self.game.scoreSingle(self.board+[card])-self.game.scoreSingle(self.board)
         elif (card.cardType == "Tempura"):
             tempPrevHands = copy.deepcopy(self.prevHands)
-            tempPrevHands[self.handTracker].remove(card)
+            tempPrevHands[self.handTracker-1].remove(card)
             totalScore = 0
             for hand in tempprevHands:
                 tempuraTracker = 0
                 for card in hand:
                     if (card.cardType == "Tempura"):
-                        tempuraTracker++
+                        tempuraTracker += 1
                 score = 2.5*tempuraTracker/(2*self.numPlayers-tempuraTracker)
                 if (score > 2.5):
                     score = 2.5
                 totalScore = (totalScore+score)/(1+totalScore*score/2.5^2)
             return totalScore
-        elif (card.cardType == "Sashimi")
+        elif (card.cardType == "Sashimi"):
+            pass
