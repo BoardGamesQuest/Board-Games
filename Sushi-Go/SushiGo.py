@@ -13,6 +13,12 @@ from CardEval import CardEvaluator
 import math
 
 distribution = {'Nigiri': 30, 'Wasabi': 10, 'Maki': 30, 'Dumpling': 30, 'Tempura': 30, 'Sashimi': 30, 'Pudding': 30}# someone needs to find the actuall distribution for cards
+def replicate(inp): #copy doesn't really work for maintaining the same instance of objects, but this will (JANK)
+    if type(inp) != list:
+        inp = [inp]
+    new = inp + [0]
+    new.pop()
+    return new
 
 class SushiGoBoard:
     def __init__(self, numPlayers=4, maxRounds=3, debugMode=False):
@@ -21,7 +27,6 @@ class SushiGoBoard:
         self.round = 0
         self.setAgents()
         self.boards, self.hands = [[] for i in range(self.numPlayers)], [[] for i in range(self.numPlayers)]
-        self.generateDeck()
 
     def setAgents(self, agents=[], numHuman=0, numLearner=0):
         self.players = []
@@ -54,7 +59,7 @@ class SushiGoBoard:
         self.hands = [self.deck.getHand(self.handSize) for i in range(self.numPlayers)]
 
     def passHands(self):
-        firstHand = copy.deepcopy(self.hands[0])
+        firstHand = replicate(self.hands[0])
         for i in range(self.numPlayers-1):
             self.hands[i] = self.hands[i+1]
         self.hands[-1] = firstHand
@@ -73,6 +78,7 @@ class SushiGoBoard:
     def setup(self):
         for i in range(self.numPlayers):
             self.players[i].board = self.boards[i]
+            self.players[i].hand = self.hands[i]
             self.players[i].round = self.round
             self.players[i].setup()
         #put any other code here to setup the cycle
@@ -86,7 +92,7 @@ class SushiGoBoard:
         self.dealHands()
         for turn in range(self.handSize):
             for i in range(self.numPlayers):
-                self.players[i].takeHand(self.hands[i])
+                self.players[i].takeHand(replicate(self.hands[i]))
                 move = self.players[i].move(self)
                 self.hands[i].remove(move) # Should error out if player sketchily gave a card they didn't have
                 self.boards[i].append(move)
