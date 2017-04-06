@@ -67,7 +67,7 @@ class CardEvaluator(Abstract):
             counter = 0
             for card in self.board:
                 if (card.cardType == "Sashimi"):
-                    counter++
+                    counter += 1
             if (counter%3 == 0):
                 tempPrevHands = copy.deepcopy(self.prevHands)
                 # print tempPrevHands[self.handTracker]

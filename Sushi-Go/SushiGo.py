@@ -70,6 +70,11 @@ class SushiGoBoard:
         Score = scoreNigiri([Board])[0] + scoreSashimi([Board])[0] + scoreDumpling([Board])[0] + scoreWasabi([Board])[0] + scoreTempura([Board])[0]
         return Score
 
+    def reset(self):
+        self.generateDeck()
+        for player in self.players:
+            player.score = 0
+
     def setup(self):
         for player in self.players:
             player.round += 1
@@ -110,8 +115,7 @@ class SushiGoBoard:
         print "Player " + str(sortedPlayers[0].playerNum + 1) + " is in the lead"
 
     def run(self, withScores=False):
-        self.generateDeck()
-        winners = []
+        self.reset()
         for roundNum in range(self.maxRounds):
             if self.debugMode:
                 print "Round " + str(roundNum+1) + ", Start."
