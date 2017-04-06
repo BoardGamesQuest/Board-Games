@@ -86,10 +86,14 @@ class SushiGoBoard:
         hands = []
         for turn in range(self.handSize):
             for i in range(self.numPlayers):
-                move = self.players[i].move(self)
-                self.players[i].board.append(move)
+                self.players[i].chosenCard = self.players[i].move(self)
+                #self.players[i].board.append(move)
+            for i in range(self.numPlayers):
+                self.players.board.append(self.players[i].chosenCard)
+                self.players.hand.remove(self.players[i].chosenCard)
                 if self.debugMode:
                     print "Player " + str(i+1) + " played a " + move.cardType + "."
+
             if turn != self.handSize - 1:
                 self.passHands()
                 if self.debugMode:
@@ -227,6 +231,3 @@ class SushiGoBoard:
 
 # SushiGo= SushiGoBoard([4,1], False)
 # SushiGo.normalDistribution()
-
-
-

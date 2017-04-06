@@ -3,10 +3,15 @@ from SushiGo import SushiGoBoard
 from MachineLearning2 import Learner2
 from SamplePlayer import Sample
 from CardEval import CardEvaluator
+from SamplePlayer2 import Sample2
 game = SushiGoBoard(numPlayers=4, debugMode=True)
+
+game.setAgents(numLearner=1)
+# game.setAgents(numHuman=1, numLearner=1)
+
 # cardEval = CardEvaluator(0, game.numPlayers, game)
-ml = Learner2(0, game.numPlayers)
-game.setAgents(agents=ml, numLearner=1)
+# game.setAgents(agents=cardEval, numLearner=1)
+
 game.run()
 agent = Sample(0, game.numPlayers)
 # game.setAgents(agents=agent)
