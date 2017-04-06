@@ -36,7 +36,7 @@ class CardEvaluator(Abstract):
             tempPrevHands = copy.deepcopy(self.prevHands)
             tempPrevHands[self.handTracker].remove(card)
             totalScore = 0
-            for hand in tempprevHands:
+            for hand in tempPrevHands:
                 tempuraTracker = 0
                 for card in hand:
                     if (card.cardType == "Tempura"):
@@ -46,4 +46,4 @@ class CardEvaluator(Abstract):
                     score = 2.5
                 totalScore = (totalScore+score)/(1+totalScore*score/2.5^2)
             return totalScore
-        elif (card.cardType == "Sashimi")
+        # elif (card.cardType == "Sashimi"):
