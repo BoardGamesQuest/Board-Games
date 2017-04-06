@@ -16,6 +16,8 @@ class CardEvaluator(Abstract):
     #     # self.prevHands[self.handTracker] = hand
 
     def move(self, game):
+        print self.hand
+        print len(self.hand)
         self.prevHands[self.handTracker] = copy.deepcopy(self.hand)
         temp = (self.hand[0], 0)
         for cards in self.prevHands[self.handTracker]:
@@ -25,9 +27,12 @@ class CardEvaluator(Abstract):
         for i in self.hand:
             if (i.cardType == temp[0].cardType):
                 self.hand.remove(i)
-        self.board.append(temp[0])
+                self.board.append(temp[0])
+                break
         self.prevHands[self.handTracker] = copy.deepcopy(self.hand)
         self.handTracker = (self.handTracker + 1) % self.numPlayers
+        print self.hand
+        print len(self.hand)
         return temp[0]
 
     def ScoreCard(self, card):
@@ -38,8 +43,8 @@ class CardEvaluator(Abstract):
             return self.game.scoreSingle(self.board+[card])-self.game.scoreSingle(self.board)
         elif (card.cardType == "Tempura"):
             tempPrevHands = copy.deepcopy(self.prevHands)
-            print tempPrevHands[self.handTracker]
-            print card
+            # print tempPrevHands[self.handTracker]
+            # print card
             for i in range(len(tempPrevHands[self.handTracker])):
                 if (tempPrevHands[self.handTracker][i].cardType == "Tempura"):
                     tempPrevHands[self.handTracker].pop(i)
