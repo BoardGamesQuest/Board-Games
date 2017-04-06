@@ -39,7 +39,9 @@ class CardEvaluator(Abstract):
         # tempGame = copy.deepcopy(game)
         # tempBoard = copy.deepcopy(self.board)
         # tempBoard2 = copy.deepcopy(self.board).append(card)
-        if self.game.scoreSingle(self.board+[card])-self.game.scoreSingle(self.board)>0:
+        if (card.cardType == "Dumpling"):
+            return self.game.scoreSingle(self.board+[card])-self.game.scoreSingle(self.board)+0.01
+        elif self.game.scoreSingle(self.board+[card])-self.game.scoreSingle(self.board)>0:
             return self.game.scoreSingle(self.board+[card])-self.game.scoreSingle(self.board)
         elif (card.cardType == "Tempura"):
             tempPrevHands = copy.deepcopy(self.prevHands)
@@ -62,4 +64,47 @@ class CardEvaluator(Abstract):
                 totalScore = (totalScore+score)/(1+totalScore*score/2.5**2)
             return totalScore
         elif (card.cardType == "Sashimi"):
-            pass
+            counter = 0
+            for card in self.board:
+                if (card.cardType == "Sashimi"):
+                    counter++
+            if (counter%3 == 0):
+                tempPrevHands = copy.deepcopy(self.prevHands)
+                # print tempPrevHands[self.handTracker]
+                # print card
+                for i in range(len(tempPrevHands[self.handTracker])):
+                    if (tempPrevHands[self.handTracker][i].cardType == "Sashimi"):
+                        tempPrevHands[self.handTracker].pop(i)
+                        break
+                # tempPrevHands[self.handTracker].remove(card)
+                totalScore = 0
+                for hand in tempPrevHands:
+                    sashimiTracker = 0
+                    for card in hand:
+                        if (card.cardType == "Sashimi"):
+                            sashimiTracker += 1
+                    score = (3+1/3)*sashimiTracker/(2*(3*self.numPlayers-sashimiTracker))
+                    if (score > (3+1/3)):
+                        score = (3+1/3)
+                    totalScore = (totalScore+score)/(1+totalScore*score/(3+1/3)**2)
+                return totalScore
+            elif (counter%3 == 1):
+                tempPrevHands = copy.deepcopy(self.prevHands)
+                # print tempPrevHands[self.handTracker]
+                # print card
+                for i in range(len(tempPrevHands[self.handTracker])):
+                    if (tempPrevHands[self.handTracker][i].cardType == "Sashimi"):
+                        tempPrevHands[self.handTracker].pop(i)
+                        break
+                # tempPrevHands[self.handTracker].remove(card)
+                totalScore = 0
+                for hand in tempPrevHands:
+                    sashimiTracker = 0
+                    for card in hand:
+                        if (card.cardType == "Sashimi"):
+                            sashimiTracker += 1
+                    score = (5)*sashimiTracker/(2*self.numPlayers-sashimiTracker)
+                    if (score > 5):
+                        score = 5
+                    totalScore = (totalScore+score)/(1+totalScore*score/5**2)
+                return totalScore
