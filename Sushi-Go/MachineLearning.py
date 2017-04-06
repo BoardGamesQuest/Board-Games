@@ -108,9 +108,13 @@ class Learner(Abstract):
         localPastMatchData['lengthOfBoard'] = total
         self.pastMatchData[roundName] = localPastMatchData
         #print(roundName + " " + str(self.pastMatchData[roundName]))
-
-            
         self.pastMatchData.close()
+        self.hand = []
+        newBoard = []
+        for card in self.board:
+            if card.cardType == 'Pudding':
+                newBoard.append(card)
+        self.board = newBoard
 
     def calculateTarget(self, rnd):
         self.pastMatchData = shelve.open('PastMatchData')

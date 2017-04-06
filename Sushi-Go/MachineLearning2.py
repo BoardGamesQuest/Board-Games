@@ -11,8 +11,8 @@ class Learner2(Abstract):
         
     def move(self, game):
         if self.collectingData:
+            #print(self.board)
             cardFinal = self.hand.pop(0)
-            self.board.append(cardFinal)
             return cardFinal
         #print(self.hand)
         self.pastMatchData = shelve.open('PastMatchData') #this algorithm will try to match the Ideal composition of cards based on passed match data.
@@ -81,6 +81,7 @@ class Learner2(Abstract):
                         #print('empty')
                         card.addNigiri(cardFinal)
                         break
+        #print(self.board)
         self.board.append(cardFinal)
         self.pastMatchData.close()
         return cardFinal
@@ -122,8 +123,6 @@ class Learner2(Abstract):
         localPastMatchData['lengthOfBoard'] = total
         self.pastMatchData[roundName] = localPastMatchData
         #print(roundName + " " + str(self.pastMatchData[roundName]))
-
-            
         self.pastMatchData.close()
 
     def calculateTarget(self, rnd):
