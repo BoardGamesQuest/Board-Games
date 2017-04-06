@@ -61,11 +61,9 @@ class Learner2(Abstract):
             if not(cardFinal == 0):
                 #print("hand: " + str(self.hand))
                 #print("removing card: " + str(cardFinal))
-                self.hand.remove(cardFinal)
                 break
         if cardFinal == 0:
             cardFinal = self.hand[0]
-            self.hand.remove(cardFinal)
 
 
         #print(target)
@@ -82,7 +80,6 @@ class Learner2(Abstract):
                         card.addNigiri(cardFinal)
                         break
         #print(self.board)
-        self.board.append(cardFinal)
         self.pastMatchData.close()
         return cardFinal
 
