@@ -89,10 +89,10 @@ class SushiGoBoard:
                 self.players[i].chosenCard = self.players[i].move(self)
                 #self.players[i].board.append(move)
             for i in range(self.numPlayers):
-                self.players.board.append(self.players[i].chosenCard)
-                self.players.hand.remove(self.players[i].chosenCard)
+                self.players[i].board.append(self.players[i].chosenCard)
+                self.players[i].hand.remove(self.players[i].chosenCard)
                 if self.debugMode:
-                    print "Player " + str(i+1) + " played a " + move.cardType + "."
+                    print "Player " + str(i+1) + " played a " + self.players[i].chosenCard.cardType + "."
 
             if turn != self.handSize - 1:
                 self.passHands()
@@ -142,6 +142,7 @@ class SushiGoBoard:
             scores.append([player.score for player in self.players])
         absoluteScores = np.sum(scores, axis=0)
         print absoluteScores
+        # print scores
         numWins = winners.count(0)
         self.debugMode = oldDebugMode
         self.setAgents(agents=oldAgents)
