@@ -18,7 +18,6 @@ class SushiGoBoard:
         self.numPlayers, self.maxRounds, self.debugMode = numPlayers, maxRounds, debugMode
         self.handSize = 12 - self.numPlayers
         self.setAgents()
-        self.boards = [[] for i in range(self.numPlayers)]
 
     def setAgents(self, agents=[], numHuman=0, numLearner=0):
         self.players = []
@@ -230,8 +229,13 @@ class SushiGoBoard:
             self.cleanup()
             if self.debugMode:
                 self.printWinners(scores, roundNum)
+<<<<<<< HEAD
         sortedPlayers = sorted(self.players, key=lambda player: player.score, reverse=True)
         winner = sortedPlayers[0].playerNum
+=======
+        sortedPlayers = sorted(self.players, key=lambda player: player.score)
+        winner = sortedPlayers[-1].playerNum
+>>>>>>> 6d9b18429676f61539ac281e194a8b8d6dbf1c6b
         return winner
 
     def test(self, player, numGames=100):
