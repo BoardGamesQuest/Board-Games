@@ -15,6 +15,6 @@ game = SushiGoBoard(numPlayers=4, debugMode=True)
 # game.run()
 agent = CardEvaluator(0, game.numPlayers, game)
 # game.setAgents(agents=agent)
-
-
-print game.test(agent)
+game.setAgents(agents=agent, numHuman=1)
+game.run()
+#print game.test(agent)
