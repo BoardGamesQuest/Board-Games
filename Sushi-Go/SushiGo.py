@@ -154,10 +154,12 @@ class SushiGoBoard:
         return np.true_divide(numWins, numGames), winners
 
     def normalDistribution(self):
-            jankrandomarray = []
+            jankrandomarray = Deck()
+            jankrandomarray.generate(distribution)
+            jankrandomarray.shuffle()
             ODDdistribution = {}
             normHand = []
-            myHypoDeckSize = len(self.deck.cards)
+            myHypoDeckSize = len(jankrandomarray.cards)
             for k,v in distribution.items(): #calculates normal distribution based on 'distribution' parameter
                 #print k
                 if k == 'Maki':
@@ -197,36 +199,36 @@ class SushiGoBoard:
                             normHand.append(Cards.Maki(3))
                     if k == 'Pudding':
                             normHand.append(Cards.Pudding())
-            for k in distribution:
-                #print k
-                 # JANKYJANkJANK
-                if k == 'Nigiri': # we need a more efficient method
-                    for j in range(distribution[k]/3):
-                        jankrandomarray.append(Cards.Nigiri(1))
-                        jankrandomarray.append(Cards.Nigiri(2))
-                        jankrandomarray.append(Cards.Nigiri(3))
-                if k == 'Wasabi':
-                    for j in range(distribution[k]):
-                        jankrandomarray.append(Cards.Wasabi())
-                if k == 'Sashimi':
-                    for j in range(distribution[k]):
-                        jankrandomarray.append(Cards.Sashimi())
-                if k == 'Dumpling':
-                    for j in range(distribution[k]):
-                        jankrandomarray.append(Cards.Dumpling())
-                if k == 'Tempura':
-                    for j in range(distribution[k]):
-                        jankrandomarray.append(Cards.Tempura())
-                if k == 'Maki':
-                    for z in range(distribution[k]/3):
-                        jankrandomarray.append(Cards.Maki(1))
-                        jankrandomarray.append(Cards.Maki(2))
-                        jankrandomarray.append(Cards.Maki(3))
-                if k == 'Pudding':
-                    for j in range(distribution[k]):
-                        jankrandomarray.append(Cards.Pudding())
+            # for k in distribution:
+            #     #print k
+            #      # JANKYJANkJANK
+            #     if k == 'Nigiri': # we need a more efficient method
+            #         for j in range(distribution[k]/3):
+            #             jankrandomarray.append(Cards.Nigiri(1))
+            #             jankrandomarray.append(Cards.Nigiri(2))
+            #             jankrandomarray.append(Cards.Nigiri(3))
+            #     if k == 'Wasabi':
+            #         for j in range(distribution[k]):
+            #             jankrandomarray.append(Cards.Wasabi())
+            #     if k == 'Sashimi':
+            #         for j in range(distribution[k]):
+            #             jankrandomarray.append(Cards.Sashimi())
+            #     if k == 'Dumpling':
+            #         for j in range(distribution[k]):
+            #             jankrandomarray.append(Cards.Dumpling())
+            #     if k == 'Tempura':
+            #         for j in range(distribution[k]):
+            #             jankrandomarray.append(Cards.Tempura())
+            #     if k == 'Maki':
+            #         for z in range(distribution[k]/3):
+            #             jankrandomarray.append(Cards.Maki(1))
+            #             jankrandomarray.append(Cards.Maki(2))
+            #             jankrandomarray.append(Cards.Maki(3))
+            #     if k == 'Pudding':
+            #         for j in range(distribution[k]):
+            #             jankrandomarray.append(Cards.Pudding())
             while (len(normHand) < self.handSize): # fill remaining cards based on pure probability
-                normHand.append(jankrandomarray[random.randint(0,myHypoDeckSize)])
+                normHand.append(jankrandomarray.cards[random.randint(0,myHypoDeckSize)])
 
 
 
