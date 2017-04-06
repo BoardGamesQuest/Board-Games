@@ -8,6 +8,7 @@ class Abstract:
         self.round = 0
         self.score = 0
         self.board = []
+        self.numPlayers = numPlayers
 
     def takeHand(self, hand):
         self.hand = hand
@@ -23,4 +24,6 @@ class Abstract:
             if card.cardType == 'Pudding':
                 newBoard.append(card)
         self.board = newBoard
-        
+
+    def setup(self):
+        pass

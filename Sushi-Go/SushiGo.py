@@ -19,7 +19,6 @@ class SushiGoBoard:
         self.handSize = 12 - self.numPlayers
         self.setAgents()
         self.boards = [[] for i in range(self.numPlayers)]
-        print self.boards
 
     def setAgents(self, agents=[], numHuman=0, numLearner=0):
         self.players = []
@@ -31,7 +30,7 @@ class SushiGoBoard:
             numCustom = 1
             self.players.append(agents)
         for i in range(numCustom, numLearner):
-            self.players.append(Learner2(i, self.numPlayers))
+            self.players.append(Learner2(i, self.numPlayers, True))
         for i in range(numCustom + numLearner, numLearner + numHuman):
             self.players.append(Interactive(i, self.numPlayers))
         for i in range(numCustom + numLearner + numHuman, self.numPlayers):
@@ -65,6 +64,8 @@ class SushiGoBoard:
             for card in board:
                 if type(card) == Cards.Nigiri:
                     boardScores[-1] += card.pointValue
+        
+        print("Nigiri: " + str(boardScores))
 
         return boardScores
 
@@ -76,6 +77,8 @@ class SushiGoBoard:
                 if type(card) == Cards.Sashimi:
                     boardScores[-1] += 1
             boardScores[-1] =  np.floor(boardScores[-1]/3) * 10
+
+        print("Sashimi: " + str(boardScores))
 
         return boardScores
 
@@ -94,6 +97,8 @@ class SushiGoBoard:
             else:
                 boardScores[-1] = 15
 
+        print("Dumpling: " + str(boardScores))
+
         return boardScores
 
     def scoreWasabi(self, boards):
@@ -105,10 +110,21 @@ class SushiGoBoard:
                     if card.nigiri:
                         boardScores[-1] += (2*card.nigiriCard.pointValue) # only * 2 becuase we already evaluate the point value once when scoring nigiri
 
+        print("Wasabi: " + str(boardScores))
+
         return boardScores
 
     def scoreTempura(self, boards):
-        boardScores = [np.floor(len([True for card in board if card.cardType = 'Tempura'])/2)*5 for board in boards]
+        # boardScores = [np.floor(len([True for card in board if card.cardType = 'Tempura'])/2)*5 for board in boards]
+        boardScores = []
+        for board in boards:
+            boardScores.append(0)
+            for card in board:
+                if type(card) == Cards.Tempura:
+                    boardScores[-1] += 1
+            boardScores[-1] =  np.floor(boardScores[-1]/2) * 5
+        print("Tempura: " + str(boardScores))
+# use IsInstance function
         return boardScores
 
     def scoreMaki(self, boards): # is there anything more eficient?
@@ -126,6 +142,8 @@ class SushiGoBoard:
                 boardScores[i] = secondPoints
             else:
                 boardScores[i] = 0
+
+        print("Maki: " + str(boardScores))
         return boardScores
 
     def scorePudding(self, boards):
@@ -143,6 +161,7 @@ class SushiGoBoard:
                 boardScores[i] = secondPoints
             else:
                 boardScores[i] = 0
+        print("Pudding: " + str(boardScores))
         return boardScores
 
 
@@ -162,6 +181,7 @@ class SushiGoBoard:
     def setup(self):
         for player in self.players:
             player.round += 1
+            player.setup()
         #put any other code here to setup the cycle
 
     def cleanup(self):
@@ -208,10 +228,16 @@ class SushiGoBoard:
             for k in range(self.numPlayers):
                 self.players[k].score += scores[k]
             self.cleanup()
+<<<<<<< HEAD
             if self.debugMode:
                 self.printWinners(scores, roundNum)
         sortedPlayers = sorted(self.players, key=lambda player: player.score, reverse=True)
         winner = sortedPlayers[0].playerNum
+=======
+            self.printWinners(scores, roundNum)
+        sortedPlayers = sorted(self.players, key=lambda player: player.score)
+        winner = sortedPlayers[-1].playerNum
+>>>>>>> 349671fc798323b0f26530e29f7cef9ffba6ad2d
         return winner
 
     def test(self, player, numGames=100):
