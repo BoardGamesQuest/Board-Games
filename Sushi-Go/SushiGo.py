@@ -39,7 +39,7 @@ class SushiGoBoard:
 
     def display(self):
         for player in self.players:
-            print "This is player {}'s hand:".format(player.playerNum), player.hand
+        #    print "This is player {}'s hand:".format(player.playerNum), player.hand
             print "This is player {}'s board:".format(player.playerNum), player.board
         #maybe move print winners to here and make scores a property of the class
 
@@ -60,10 +60,13 @@ class SushiGoBoard:
 
     def score(self, lastRound=False):
         boards = [player.board for player in self.players]
+        print boards
         scores = np.array([scoreNigiri(boards), scoreSashimi(boards), scoreDumpling(boards), scoreWasabi(boards), scoreTempura(boards), scoreMaki(boards)])
+        print scores
         if lastRound:
             scores = np.append(scores, np.array([scorePudding(boards)]), axis=0)
         scores = np.sum(scores, axis=0)
+        print scores
         return scores
 
     def scoreSingle(self, Board):
@@ -97,6 +100,7 @@ class SushiGoBoard:
             for i in range(self.numPlayers):
                 self.players[i].board.append(self.players[i].chosenCard)
                 self.players[i].hand.remove(self.players[i].chosenCard)
+                self.display()
                 if self.debugMode:
                     print "Player " + str(i+1) + " played a " + self.players[i].chosenCard.cardType + "."
 
@@ -104,6 +108,7 @@ class SushiGoBoard:
                 self.passHands()
                 if self.debugMode:
                     print "Passing Hands. Next Turn."
+
 
     def printWinners(self, scores, roundNum=False):
         sortedPlayers = sorted(self.players, key=lambda player: player.score, reverse=True)

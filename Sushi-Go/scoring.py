@@ -5,10 +5,11 @@ def scoreNigiri(boards):
     for board in boards:
         boardScores.append(0)
         for card in board:
-            if card.cardType == 'Nigiri':
+            if card.cardType[0:6] == 'Nigiri' :
                 boardScores[-1] += card.pointValue
-                
-    # print("Nigiri: " + str(boardScores))
+                #print card.pointValue
+
+    #print("Nigiri: " + str(boardScores))
 
     return boardScores
 
@@ -21,7 +22,7 @@ def scoreSashimi(boards):
                 boardScores[-1] += 1
         boardScores[-1] =  np.floor(boardScores[-1]/3) * 10
 
-    # print("Sashimi: " + str(boardScores))
+    #print("Sashimi: " + str(boardScores))
 
     return boardScores
 
@@ -33,14 +34,16 @@ def scoreDumpling(boards):
             if card.cardType == 'Dumpling':
                 boardScores[-1] += 1
         score = 0
+        print boardScores[-1]
         if (boardScores[-1] < 5):
-            for i in range(boardScores[-1]): # there might be something more efficient
+            for i in range(boardScores[-1]+1): # there might be something more efficient
                 score += i
+                print ("I: " + str(i) + " score: " + str(score))
             boardScores[-1] = score
         else:
             boardScores[-1] = 15
 
-    # print("Dumpling: " + str(boardScores))
+    #print("Dumpling: " + str(boardScores))
 
     return boardScores
 
@@ -53,7 +56,7 @@ def scoreWasabi(boards):
                 if card.nigiri:
                     boardScores[-1] += (2*card.nigiriCard.pointValue) # only * 2 becuase we already evaluate the point value once when scoring nigiri
 
-    # print("Wasabi: " + str(boardScores))
+    #print("Wasabi: " + str(boardScores))
 
     return boardScores
 
@@ -65,7 +68,7 @@ def scoreTempura(boards):
             if card.cardType == 'Tempura':
                 boardScores[-1] += 1
         boardScores[-1] =  np.floor(boardScores[-1]/2) * 5
-    # print("Tempura: " + str(boardScores))
+    #print("Tempura: " + str(boardScores))
 # use IsInstance function
     return boardScores
 
@@ -74,7 +77,7 @@ def scoreMaki(boards): # is there anything more eficient?
     for board in boards:
         boardScores.append(0)
         for card in board:
-            if card.cardType == 'Maki':
+            if card.cardType[0:4] == 'Maki':
                 boardScores[-1] += card.size
     sortScores = sorted(boardScores)
     firsts = []
@@ -92,7 +95,7 @@ def scoreMaki(boards): # is there anything more eficient?
         else:
             boardScores[i] = 0
 
-    # print("Maki: " + str(boardScores))
+    #print("Maki: " + str(boardScores))
 
     return boardScores
 
@@ -119,6 +122,6 @@ def scorePudding(boards):
         else:
             boardScores[i] = 0
 
-    # print("Pudding: " + str(boardScores))
+    #print("Pudding: " + str(boardScores))
 
     return boardScores
