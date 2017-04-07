@@ -13,7 +13,7 @@ from CardEval import CardEvaluator
 import math
 
 distribution = {'Nigiri': 5, 'Wasabi': 0, 'Maki': 2, 'Dumpling': 14, 'Tempura': 14, 'Sashimi': 14, 'Pudding': 10}# someone needs to find the actuall distribution for cards
-
+makiDistribution = [3, 5, 2]
 class SushiGoBoard:
     def __init__(self, numPlayers=4, maxRounds=3, debugMode=False):
         self.numPlayers, self.maxRounds, self.debugMode = numPlayers, maxRounds, debugMode
@@ -45,7 +45,7 @@ class SushiGoBoard:
 
     def generateDeck(self):
         self.deck = Deck()
-        self.deck.generate(distribution)
+        self.deck.generate()
         self.deck.shuffle()
 
     def dealHands(self):
@@ -157,6 +157,7 @@ class SushiGoBoard:
             jankrandomarray = []
             ODDdistribution = {}
             normHand = []
+            print len(self.deck.cards)
             myHypoDeckSize = len(self.deck.cards)
             for k,v in distribution.items(): #calculates normal distribution based on 'distribution' parameter
                 #print k
@@ -197,35 +198,37 @@ class SushiGoBoard:
                             normHand.append(Cards.Maki(3))
                     if k == 'Pudding':
                             normHand.append(Cards.Pudding())
-            for k in distribution:
-                #print k
-                 # JANKYJANkJANK
-                if k == 'Nigiri': # we need a more efficient method
-                    for j in range(distribution[k]/3):
-                        jankrandomarray.append(Cards.Nigiri(1))
-                        jankrandomarray.append(Cards.Nigiri(2))
-                        jankrandomarray.append(Cards.Nigiri(3))
-                if k == 'Wasabi':
-                    for j in range(distribution[k]):
-                        jankrandomarray.append(Cards.Wasabi())
-                if k == 'Sashimi':
-                    for j in range(distribution[k]):
-                        jankrandomarray.append(Cards.Sashimi())
-                if k == 'Dumpling':
-                    for j in range(distribution[k]):
-                        jankrandomarray.append(Cards.Dumpling())
-                if k == 'Tempura':
-                    for j in range(distribution[k]):
-                        jankrandomarray.append(Cards.Tempura())
-                if k == 'Maki':
-                    for z in range(distribution[k]/3):
-                        jankrandomarray.append(Cards.Maki(1))
-                        jankrandomarray.append(Cards.Maki(2))
-                        jankrandomarray.append(Cards.Maki(3))
-                if k == 'Pudding':
-                    for j in range(distribution[k]):
-                        jankrandomarray.append(Cards.Pudding())
+            # for k in distribution:
+            #     #print k
+            #      # JANKYJANkJANK
+            #     if k == 'Nigiri': # we need a more efficient method
+            #         for j in range(distribution[k]/3):
+            #             jankrandomarray.append(Cards.Nigiri(1))
+            #             jankrandomarray.append(Cards.Nigiri(2))
+            #             jankrandomarray.append(Cards.Nigiri(3))
+            #     if k == 'Wasabi':
+            #         for j in range(distribution[k]):
+            #             jankrandomarray.append(Cards.Wasabi())
+            #     if k == 'Sashimi':
+            #         for j in range(distribution[k]):
+            #             jankrandomarray.append(Cards.Sashimi())
+            #     if k == 'Dumpling':
+            #         for j in range(distribution[k]):
+            #             jankrandomarray.append(Cards.Dumpling())
+            #     if k == 'Tempura':
+            #         for j in range(distribution[k]):
+            #             jankrandomarray.append(Cards.Tempura())
+            #     if k == 'Maki':
+            #         for z in range(distribution[k]/3):
+            #             jankrandomarray.append(Cards.Maki(1))
+            #             jankrandomarray.append(Cards.Maki(2))
+            #             jankrandomarray.append(Cards.Maki(3))
+            #     if k == 'Pudding':
+            #         for j in range(distribution[k]):
+            #             jankrandomarray.append(Cards.Pudding())
+            jankrandomarray = self.deck.generateCards()
             while (len(normHand) < self.handSize): # fill remaining cards based on pure probability
+                print len(jankrandomarray), myHypoDeckSize
                 normHand.append(jankrandomarray[random.randint(0,myHypoDeckSize)])
 
 

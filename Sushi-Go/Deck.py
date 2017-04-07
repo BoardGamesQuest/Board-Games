@@ -1,51 +1,47 @@
 import random
 import Cards
 
+distribution = {'Nigiri': 5, 'Wasabi': 0, 'Maki': 2, 'Dumpling': 14, 'Tempura': 14, 'Sashimi': 14, 'Pudding': 10}# someone needs to find the actuall distribution for cards
+makiDistribution = [3, 5, 2]
+nigiriDistribution = [1,2,1]
+# from SushiGo import distribution, makiDistribution, nigiriDistribution
+
 class Deck:
     def __init__(self):
         self.cards = []
 
-    def generate(self, distribution):
+    def generateCards(self):
         for cardType in distribution:
             if cardType == 'Nigiri': # we need a more efficient method
                 for i in range(distribution[cardType]):
-                    self.cards.append(Cards.Nigiri(1))
-                    self.cards.append(Cards.Nigiri(2))
-                    self.cards.append(Cards.Nigiri(2))
-                    self.cards.append(Cards.Nigiri(3))
+                    for j in range(len(nigiriDistribution)):
+                        for k in range(nigiriDistribution[j]):
+                            cards.append(Cards.Nigiri(j))
             if cardType == 'Wasabi':
                 for i in range(distribution[cardType]):
-                    self.cards.append(Cards.Wasabi())
+                    cards.append(Cards.Wasabi())
             if cardType == 'Sashimi':
                 for i in range(distribution[cardType]):
-                    self.cards.append(Cards.Sashimi())
+                    cards.append(Cards.Sashimi())
             if cardType == 'Dumpling':
                 for i in range(distribution[cardType]):
-                    self.cards.append(Cards.Dumpling())
+                    cards.append(Cards.Dumpling())
             if cardType == 'Tempura':
                 for i in range(distribution[cardType]):
-                    self.cards.append(Cards.Tempura())
+                    cards.append(Cards.Tempura())
             if cardType == 'Maki':
                 for i in range(distribution[cardType]):
-                    self.cards.append(Cards.Maki(1))
-                    self.cards.append(Cards.Maki(1))
-                    self.cards.append(Cards.Maki(1))
-                    self.cards.append(Cards.Maki(2))
-                    self.cards.append(Cards.Maki(2))
-                    self.cards.append(Cards.Maki(2))
-                    self.cards.append(Cards.Maki(2))
-                    self.cards.append(Cards.Maki(2))
-                    self.cards.append(Cards.Maki(2))
-                    self.cards.append(Cards.Maki(3))
-                    self.cards.append(Cards.Maki(3))
-                    self.cards.append(Cards.Maki(3))
-                    self.cards.append(Cards.Maki(3))
+                    for j in range(len(makiDistribution)):
+                        for k in range(makiDistribution[j]):
+                            cards.append(Cards.Maki(j))
             if cardType == 'Pudding':
                 for i in range(distribution[cardType]):
-                    self.cards.append(Cards.Pudding())
+                    cards.append(Cards.Pudding())
 
-        return self.cards
+        return cards
 
+    def generate(self):
+        self.cards = self.generateCards()
 
     def shuffle(self):
         random.shuffle(self.cards)
