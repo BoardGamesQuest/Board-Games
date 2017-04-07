@@ -3,7 +3,7 @@ from humanAgent import Human
 from randomAgent import RandomChoose
 from minimaxAgent import Minimax
 
-def compileAgents(boardParams, numRand=1, numHuman=0, numMinimax=1):
+def compileAgents(boardParams, numRand=1, numHuman=1, numMinimax=0):
     agents = []
     for i in range(numRand):
         agents.append(RandomChoose(boardParams))

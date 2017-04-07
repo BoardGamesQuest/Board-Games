@@ -23,7 +23,17 @@ class Board:
         self.emptyIndices = copy.deepcopy(self.allIndices)
 
     def display(self):
-        print self.state
+        newState = []
+        for row in self.state:
+            newRow = []
+            for element in row:
+                if element == 0:
+                    newRow.append(' ')
+                elif element == 1:
+                    newRow.append('X')
+                elif element == 2:
+                    newRow.append('O')
+            newState.append(newRow)
 
     def findRowIndices(self):
         # Compiles row indices as described in __init__

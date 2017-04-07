@@ -1,5 +1,6 @@
 from board import Board, boardParams
 from Agents.turnBasedQ import Q
+import numpy as np
 
 # boardParams = {"numPlayers" : 2, "size" : 3, "dimension" : 2, "limit" : 10}
 
@@ -8,9 +9,11 @@ from Agents.turnBasedQ import Q
 # deterministic = Q(boardParams, randomness=0.001)
 board = Board(boardParams)
 alg = Q(boardParams)
-print board.test(alg, 500)
-board.train(alg, numGames=50000)
-print board.test(alg, 500)
+# print board.test(alg, 500)
+# board.train(alg, numGames=50000)
+# print board.test(alg, 500)
+alg.Q = np.load("q.npy")
+print len(alg.Q)
 board.interactiveTest(alg)
 # rand = Q(boardParams, randomness=0.8)
 # agents = [deterministic, normal, rand]
